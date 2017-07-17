@@ -6,7 +6,7 @@
 /*   By: lyoung <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/13 11:41:41 by lyoung            #+#    #+#             */
-/*   Updated: 2017/07/13 13:25:02 by lyoung           ###   ########.fr       */
+/*   Updated: 2017/07/17 14:39:26 by lyoung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,31 @@
 # define WOLF3D_H
 # include "libft/superlibft.h"
 # include "minilibx/mlx.h"
+# include <math.h>
 
-typedef struct	s_player
+# define WIN_W 320
+# define WIN_H 200
+# define HALF_W 160
+# define HALF_H 100
+# define SCALE 64
+# define FOV 60
+
+typedef struct	s_ixy
 {
-	int			pos_x;
-	int			pos_y;
-	int			pos_z;
-	int			dir_x;
-	int			dir_y;
-	int			dir_z;
+	int			x;
+	int			y;
+}				t_ixy;
+
+typedef struct	s_dxy
+{
+	double		x;
+	double		y;
+}				t_dxy;
+
+typedef struct		s_player
+{
+	struct s_ixy	pos;
+	struct s_dxy	dir;
 }				t_player;
 
 typedef struct	s_map
@@ -34,8 +50,24 @@ typedef struct	s_map
 
 typedef struct		s_env
 {
+	void			*mlx;
+	void			*win;
 	struct s_map	map;
 	struct s_player	player;
 }					t_env;
+
+/*
+** --------------- main.c --------------
+*/
+
+void	init_map(t_env *env, char *line);
+void	load_map(t_env *env, int fd);
+t_env	*init_env(void);
+void	print_grid(t_env *env);
+void	ray_cast(t_env *env);
+
+/*
+** --------------- main.c --------------
+*/
 
 #endif

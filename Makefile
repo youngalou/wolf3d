@@ -6,7 +6,7 @@
 #    By: lyoung <marvin@42.fr>                      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/06/07 13:21:13 by lyoung            #+#    #+#              #
-#    Updated: 2017/07/13 12:27:33 by lyoung           ###   ########.fr        #
+#    Updated: 2017/07/17 14:40:18 by lyoung           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,6 +17,7 @@ MLX = minilibx/libmlx.a
 LIBFT = libft/libft.a
 
 FILES = main.c \
+		ray_cast.c \
 
 SRC = $(addprefix src/, $(FILES))
 

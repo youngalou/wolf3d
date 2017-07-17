@@ -6,7 +6,7 @@
 /*   By: lyoung <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/13 11:41:21 by lyoung            #+#    #+#             */
-/*   Updated: 2017/07/14 16:20:36 by lyoung           ###   ########.fr       */
+/*   Updated: 2017/07/17 14:39:06 by lyoung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,12 @@ void	init_map(t_env *env, char *line)
 		line++;
 	while (*line == ' ' || *line == '\t')
 		line++;
-	env->player.pos_x = ft_atoi(line);
+	env->player.pos.x = (ft_atoi(line) * SCALE) - (SCALE / 2);
 	while (*line >= '0' && *line <= '9')
 		line++;
 	while (*line == ' ' || *line == '\t')
 		line++;
-	env->player.pos_y = ft_atoi(line);
+	env->player.pos.y = (ft_atoi(line) * SCALE) - (SCALE / 2);
 }
 
 void	load_map(t_env *env, int fd)
@@ -68,9 +68,8 @@ t_env	*init_env(void)
 	env->map.grid = 0;
 	env->map.width = 0;
 	env->map.length = 0;
-	env->player.pos_x = 0;
-	env->player.pos_y = 0;
-	env->player.pos_z = 0;
+	env->player.dir.x = 0;
+	env->player.dir.y = 0;
 	return (env);
 }
 
@@ -93,6 +92,14 @@ void	print_grid(t_env *env)
 	}
 }
 
+void	open_mlx(t_env *env)
+{
+	env->mlx = mlx_init();
+	env->win = mlx_new_window(env->mlx, WIN_W * 4, WIN_H * 4, "WOLF3D");
+	ray_cast(env);
+	mlx_loop(env->mlx);
+}
+
 int		main(int argc, char **argv)
 {
 	t_env	*env;
@@ -107,6 +114,7 @@ int		main(int argc, char **argv)
 	env = init_env();
 	fd = open(argv[1], O_RDONLY);
 	load_map(env, fd);
-	//print_grid(env);
+	print_grid(env);
+	open_mlx(env);
 	return (0);
 }
