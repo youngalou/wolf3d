@@ -6,7 +6,7 @@
 #    By: lyoung <marvin@42.fr>                      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/06/07 13:21:13 by lyoung            #+#    #+#              #
-#    Updated: 2017/07/17 14:40:18 by lyoung           ###   ########.fr        #
+#    Updated: 2017/07/18 11:19:41 by lyoung           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,7 @@ OBJ = $(SRC:.c=.o)
 all: $(NAME)
 
 $(NAME): $(MLX) $(LIBFT) $(OBJ) wolf3d.h
-	@gcc -o $(NAME) $(CFLAG) $(OBJ) $(MLX) $(LIBFT) $(MLXFLAG) -g
+	@gcc -o $(NAME) $(CFLAG) $(OBJ) $(MLX) $(LIBFT) $(MLXFLAG)
 	@echo "\033[32m- $(NAME) executable compiled\033[0m"
 
 $(OBJ): %.o: %.c

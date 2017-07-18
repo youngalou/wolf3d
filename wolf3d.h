@@ -6,7 +6,7 @@
 /*   By: lyoung <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/13 11:41:41 by lyoung            #+#    #+#             */
-/*   Updated: 2017/07/17 14:39:26 by lyoung           ###   ########.fr       */
+/*   Updated: 2017/07/18 12:37:22 by lyoung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # define HALF_W 160
 # define HALF_H 100
 # define SCALE 64
-# define FOV 60
+# define FOV M_PI / 3
 
 typedef struct	s_ixy
 {
@@ -64,10 +64,11 @@ void	init_map(t_env *env, char *line);
 void	load_map(t_env *env, int fd);
 t_env	*init_env(void);
 void	print_grid(t_env *env);
-void	ray_cast(t_env *env);
 
 /*
-** --------------- main.c --------------
+** --------------- ray_cast.c --------------
 */
+
+void	ray_cast(t_env *env);
 
 #endif

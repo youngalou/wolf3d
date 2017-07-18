@@ -6,16 +6,20 @@
 /*   By: lyoung <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/17 11:10:14 by lyoung            #+#    #+#             */
-/*   Updated: 2017/07/17 14:53:41 by lyoung           ###   ########.fr       */
+/*   Updated: 2017/07/18 16:40:06 by lyoung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../wolf3d.h"
+#include <stdio.h>
 
 int		check_grid(t_env *env, int x, int y)
 {
 	x = x / SCALE;
 	y = y / SCALE;
+	//ft_printf("%d\t%d\n", x, y);
+	if (x >= env->map.width || y >= env->map.length || x < 0 || y < 0)
+		return (1);
 	return (env->map.grid[y][x]);
 }
 
@@ -57,19 +61,20 @@ int		vertical_ray(t_env *env, double angle)
 	return (distance);
 }
 
-void	draw_col(t_env *env, int col, int slice)
+void	draw_col(t_env *env, int col, double slice)
 {
 	int		y;
 	int		x;
 	int		floor;
 
-	y = HALF_H - (slice / 2);
+	y = (HALF_H * 4) - (slice / 2);
 	floor = y + slice;
 	while (y < floor)
 	{
 		x = col;
 		while (x < col + 4)
 		{
+			ft_printf("%d\t%d\n", x, y);
 			mlx_pixel_put(env->mlx, env->win, x, y, 0xffff);
 			x++;
 		}
@@ -84,16 +89,19 @@ void	ray_cast(t_env *env)
 	int		d_V;
 	int		slice;
 	int		col;
+	double	var;
 
-	angle = env->player.dir.x - (M_PI / 6);
+	angle = env->player.dir.x - (FOV / 2);
+	var = SCALE / 277;
 	col = 0;
-	while (col < 320)
+	while (col < WIN_W * 4)
 	{
 		d_H = horizontal_ray(env, angle);
 		d_V = vertical_ray(env, angle);
-		slice = (SCALE / 277) * ((d_H <= d_V) ? d_H : d_V);
-		draw_col(env, col, slice);
+		slice = ((d_H <= d_V) ? d_H : d_V) / 4; //using divide by 4 instead of mult by (SCALE / 277)
+		printf("%lf\t%d\n", var, slice);
+		draw_col(env, col, slice * 4);
 		angle += (M_PI / 960);
-		col++;
+		col += 4;
 	}
 }

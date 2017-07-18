@@ -6,7 +6,7 @@
 /*   By: lyoung <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/13 11:41:21 by lyoung            #+#    #+#             */
-/*   Updated: 2017/07/17 14:39:06 by lyoung           ###   ########.fr       */
+/*   Updated: 2017/07/18 12:33:24 by lyoung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ t_env	*init_env(void)
 	env->map.grid = 0;
 	env->map.width = 0;
 	env->map.length = 0;
-	env->player.dir.x = 0;
+	env->player.dir.x = M_PI / 4;
 	env->player.dir.y = 0;
 	return (env);
 }
