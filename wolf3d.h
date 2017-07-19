@@ -6,7 +6,7 @@
 /*   By: lyoung <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/13 11:41:41 by lyoung            #+#    #+#             */
-/*   Updated: 2017/07/18 12:37:22 by lyoung           ###   ########.fr       */
+/*   Updated: 2017/07/19 14:10:01 by lyoung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ typedef struct		s_env
 	void			*win;
 	struct s_map	map;
 	struct s_player	player;
+	int				constant;
 }					t_env;
 
 /*
@@ -70,5 +71,11 @@ void	print_grid(t_env *env);
 */
 
 void	ray_cast(t_env *env);
+
+/*
+** --------------- key_command.c --------------
+*/
+
+int		key_command(int key, t_env *env);
 
 #endif

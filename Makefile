@@ -6,7 +6,7 @@
 #    By: lyoung <marvin@42.fr>                      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/06/07 13:21:13 by lyoung            #+#    #+#              #
-#    Updated: 2017/07/18 11:19:41 by lyoung           ###   ########.fr        #
+#    Updated: 2017/07/19 11:19:04 by lyoung           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,6 +18,7 @@ LIBFT = libft/libft.a
 
 FILES = main.c \
 		ray_cast.c \
+		key_command.c \
 
 SRC = $(addprefix src/, $(FILES))
 
