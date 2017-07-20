@@ -6,7 +6,7 @@
 /*   By: lyoung <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/13 11:41:41 by lyoung            #+#    #+#             */
-/*   Updated: 2017/07/19 14:10:01 by lyoung           ###   ########.fr       */
+/*   Updated: 2017/07/19 16:38:10 by lyoung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # define HALF_H 100
 # define SCALE 64
 # define FOV M_PI / 3
+# define SPEED 4
 
 typedef struct	s_ixy
 {
