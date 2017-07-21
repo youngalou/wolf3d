@@ -6,7 +6,7 @@
 /*   By: lyoung <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/17 11:10:14 by lyoung            #+#    #+#             */
-/*   Updated: 2017/07/19 19:26:16 by lyoung           ###   ########.fr       */
+/*   Updated: 2017/07/21 16:39:48 by lyoung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,10 +76,23 @@ void	draw_col(t_env *env, int col, int slice)
 		x = col;
 		while (x < col + 4)
 		{
-			mlx_pixel_put(env->mlx, env->win, x, y, color);
+			//mlx_pixel_put(env->mlx, env->win, x, y, color);
+			env->pixels[x + (y * (WIN_W * 4))] = color;
 			x++;
 		}
 		y++;
+	}
+}
+
+void	clear_img(int *pixels)
+{
+	int		i;
+
+	i = 0;
+	while (i < (WIN_W * 4) * (WIN_H * 4))
+	{
+		pixels[i] = 0;
+		i++;
 	}
 }
 
@@ -92,6 +105,13 @@ void	ray_cast(t_env *env)
 	int		col;
 
 	//issues with tan at all 90 degree angles evaluating to undefined values
+	if (env->drawn == 1)
+	{
+		//mlx_clear_window(env->mlx, env->win);
+		clear_img(env->pixels);
+		//free(env->pixels);
+		env->drawn = 0;
+	}
 	angle = env->player.dir.x + (FOV / 2);
 	col = 0;
 	while (col < WIN_W * 4)
@@ -104,4 +124,6 @@ void	ray_cast(t_env *env)
 		angle -= (M_PI / 960);
 		col += 4;
 	}
+	mlx_put_image_to_window(env->mlx, env->win, env->img, 0, 0);
+	env->drawn = 1;
 }

@@ -6,7 +6,7 @@
 /*   By: lyoung <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/19 11:14:26 by lyoung            #+#    #+#             */
-/*   Updated: 2017/07/19 17:00:14 by lyoung           ###   ########.fr       */
+/*   Updated: 2017/07/21 16:28:17 by lyoung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ int		key_command(int key, t_env *env)
 				env->player.pos.x -= cos(env->player.dir.x - (M_PI / 2)) * SPEED;
 			}
 		}
-		mlx_clear_window(env->mlx, env->win);
+		//mlx_clear_window(env->mlx, env->win);
 		ray_cast(env);
 	}
 	return (0);

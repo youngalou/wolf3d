@@ -6,7 +6,7 @@
 /*   By: lyoung <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/13 11:41:41 by lyoung            #+#    #+#             */
-/*   Updated: 2017/07/19 16:38:10 by lyoung           ###   ########.fr       */
+/*   Updated: 2017/07/21 16:21:07 by lyoung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,9 +53,15 @@ typedef struct		s_env
 {
 	void			*mlx;
 	void			*win;
+	void			*img;
+	int				*pixels;
+	int				bpp;
+	int				sl;
+	int				endian;
 	struct s_map	map;
 	struct s_player	player;
 	int				constant;
+	int				drawn;
 }					t_env;
 
 /*
