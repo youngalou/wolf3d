@@ -6,7 +6,7 @@
 /*   By: lyoung <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/17 11:10:14 by lyoung            #+#    #+#             */
-/*   Updated: 2017/07/21 16:39:48 by lyoung           ###   ########.fr       */
+/*   Updated: 2017/07/27 11:33:09 by lyoung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,12 @@ int		horizontal_ray(t_env *env, double angle)
 	H.x = env->player.pos.x + ((env->player.pos.y - H.y) / tan(angle));
 	while (!check_grid(env, H.x, H.y))
 	{
-		H.x += ((angle > M_PI / 2 && angle < M_PI) || (angle > M_PI && angle < 3 * M_PI / 2) ? -Xi : Xi);
+		H.x += ((angle > M_PI) ? -Xi : Xi);
 		H.y += ((angle < M_PI) ? -SCALE : SCALE);
 	}
 	distance = fabs((env->player.pos.y - H.y) / sin(angle)) * cos(env->player.dir.x - angle);
+	if (distance < 0)
+		distance = INT_MAX;
 	return (distance);
 }
 
@@ -53,11 +55,12 @@ int		vertical_ray(t_env *env, double angle)
 	V.y = env->player.pos.y + ((env->player.pos.x - V.x) * tan(angle));
 	while (!check_grid(env, V.x, V.y))
 	{
-		ft_printf("%d\t%d\n", V.x / 64, V.y / 64);
 		V.x += ((angle > M_PI / 2 && angle < 3 * M_PI / 2) ? -SCALE : SCALE);
-		V.y += ((angle < M_PI / 2) || (angle > M_PI && angle < 3 * M_PI / 2) ? -Yi : Yi);
+		V.y += ((angle < M_PI / 2 || angle > 3 * M_PI / 2) ? -Yi : Yi);
 	}
 	distance = fabs((env->player.pos.x - V.x) / cos(angle)) * cos(env->player.dir.x - angle);
+	if (distance < 0)
+		distance = INT_MAX;
 	return (distance);
 }
 
@@ -76,7 +79,6 @@ void	draw_col(t_env *env, int col, int slice)
 		x = col;
 		while (x < col + 4)
 		{
-			//mlx_pixel_put(env->mlx, env->win, x, y, color);
 			env->pixels[x + (y * (WIN_W * 4))] = color;
 			x++;
 		}
@@ -104,24 +106,25 @@ void	ray_cast(t_env *env)
 	int		slice;
 	int		col;
 
-	//issues with tan at all 90 degree angles evaluating to undefined values
 	if (env->drawn == 1)
 	{
 		//mlx_clear_window(env->mlx, env->win);
 		clear_img(env->pixels);
-		//free(env->pixels);
 		env->drawn = 0;
 	}
 	angle = env->player.dir.x + (FOV / 2);
+	if (angle > 2 * M_PI)
+		angle -= (2 * M_PI);
 	col = 0;
 	while (col < WIN_W * 4)
 	{
 		d_H = horizontal_ray(env, angle);
 		d_V = vertical_ray(env, angle);
 		slice = env->constant * 4 / ((d_H <= d_V) ? d_H : d_V);
-		printf("%d\t%d\t%d\n", d_H, d_V, col);
 		draw_col(env, col, slice);
 		angle -= (M_PI / 960);
+		if (angle < 0)
+			angle += (2 * M_PI);
 		col += 4;
 	}
 	mlx_put_image_to_window(env->mlx, env->win, env->img, 0, 0);

@@ -6,7 +6,7 @@
 /*   By: lyoung <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/13 11:41:21 by lyoung            #+#    #+#             */
-/*   Updated: 2017/07/21 16:37:53 by lyoung           ###   ########.fr       */
+/*   Updated: 2017/07/27 10:23:44 by lyoung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ t_env	*init_env(void)
 	env->map.grid = 0;
 	env->map.width = 0;
 	env->map.length = 0;
-	env->player.dir.x = M_PI / 2;
+	env->player.dir.x = 3 * M_PI / 2;
 	env->player.dir.y = 0;
 	env->constant = SCALE * 277;
 	env->bpp = 4;
