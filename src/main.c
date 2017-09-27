@@ -6,7 +6,7 @@
 /*   By: lyoung <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/13 11:41:21 by lyoung            #+#    #+#             */
-/*   Updated: 2017/07/27 10:23:44 by lyoung           ###   ########.fr       */
+/*   Updated: 2017/07/28 14:14:33 by lyoung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,9 +68,8 @@ t_env	*init_env(void)
 	env->map.grid = 0;
 	env->map.width = 0;
 	env->map.length = 0;
-	env->player.dir.x = 3 * M_PI / 2;
+	env->player.dir.x = 0;
 	env->player.dir.y = 0;
-	env->constant = SCALE * 277;
 	env->bpp = 4;
 	env->sl = 0;
 	env->endian = 0;
@@ -100,11 +99,12 @@ void	print_grid(t_env *env)
 void	open_mlx(t_env *env)
 {
 	env->mlx = mlx_init();
-	env->win = mlx_new_window(env->mlx, WIN_W * 4, WIN_H * 4, "WOLF3D");
-	env->img = mlx_new_image(env->mlx, WIN_W * 4, WIN_H * 4);
+	env->win = mlx_new_window(env->mlx, WIN_W, WIN_H, "WOLF3D");
+	env->img = mlx_new_image(env->mlx, WIN_W, WIN_H);
 	env->pixels = (int*)mlx_get_data_addr(env->img, &env->bpp, &env->sl, &env->endian);
 	ray_cast(env);
 	mlx_hook(env->win, 2, 0, key_command, env);
+	mlx_hook(env->win, 17, 0, exit_hook, env);
 	mlx_loop(env->mlx);
 }
 

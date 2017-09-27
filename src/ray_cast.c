@@ -6,7 +6,7 @@
 /*   By: lyoung <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/17 11:10:14 by lyoung            #+#    #+#             */
-/*   Updated: 2017/07/27 11:33:09 by lyoung           ###   ########.fr       */
+/*   Updated: 2017/08/22 11:37:54 by lyoung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,10 @@
 
 int		check_grid(t_env *env, int x, int y)
 {
-	x = x / SCALE;
-	y = y / SCALE;
-	if (x >= env->map.width || y >= env->map.length || x < 0 || y < 0)
-		return (1);
+	x /= SCALE;
+	y /= SCALE;
+	if (x >= env->map.width || y >= env->map.length || x < 0 || y < 0) //make sure position is within map
+		return (-1);
 	return (env->map.grid[y][x]);
 }
 
@@ -51,15 +51,15 @@ int		vertical_ray(t_env *env, double angle)
 
 	Yi = SCALE * tan(angle);
 	V.x = env->player.pos.x / SCALE;
-	V.x = (V.x * SCALE) + ((angle > M_PI / 2 && angle < 3 * M_PI / 2) ? -1 : 64);
+	V.x = (V.x * SCALE) + ((angle > M_PI / 2 && angle < 3 * M_PI / 2) ? -1 : SCALE);
 	V.y = env->player.pos.y + ((env->player.pos.x - V.x) * tan(angle));
 	while (!check_grid(env, V.x, V.y))
 	{
-		V.x += ((angle > M_PI / 2 && angle < 3 * M_PI / 2) ? -SCALE : SCALE);
+		V.x += ((angle > M_PI / 2 && angle < 3 * M_PI / 2) ? -SCALE : SCALE); //unit circle to pixel board conv
 		V.y += ((angle < M_PI / 2 || angle > 3 * M_PI / 2) ? -Yi : Yi);
 	}
 	distance = fabs((env->player.pos.x - V.x) / cos(angle)) * cos(env->player.dir.x - angle);
-	if (distance < 0)
+	if (distance < 0) //prevents tan() resulting in undefined with 90 degree angles
 		distance = INT_MAX;
 	return (distance);
 }
@@ -67,21 +67,16 @@ int		vertical_ray(t_env *env, double angle)
 void	draw_col(t_env *env, int col, int slice)
 {
 	int		y;
-	int		x;
 	int		floor;
-	int		color;
 
-	y = (HALF_H * 4) - (slice / 2);
+	if (slice > WIN_H)
+		slice = WIN_H;
+	y = HALF_H - (slice / 2);
 	floor = y + slice;
-	color = 0xff - (slice / 8);
+	env->color = 0xff - (0xff * SMOG / slice); //add smog (probably will be replaced with a function)
 	while (y < floor)
 	{
-		x = col;
-		while (x < col + 4)
-		{
-			env->pixels[x + (y * (WIN_W * 4))] = color;
-			x++;
-		}
+		env->pixels[col + (y * (WIN_W))] = env->color;
 		y++;
 	}
 }
@@ -91,7 +86,7 @@ void	clear_img(int *pixels)
 	int		i;
 
 	i = 0;
-	while (i < (WIN_W * 4) * (WIN_H * 4))
+	while (i < (WIN_W * WIN_H))
 	{
 		pixels[i] = 0;
 		i++;
@@ -108,7 +103,6 @@ void	ray_cast(t_env *env)
 
 	if (env->drawn == 1)
 	{
-		//mlx_clear_window(env->mlx, env->win);
 		clear_img(env->pixels);
 		env->drawn = 0;
 	}
@@ -116,16 +110,17 @@ void	ray_cast(t_env *env)
 	if (angle > 2 * M_PI)
 		angle -= (2 * M_PI);
 	col = 0;
-	while (col < WIN_W * 4)
+	while (col < WIN_W)
 	{
 		d_H = horizontal_ray(env, angle);
 		d_V = vertical_ray(env, angle);
-		slice = env->constant * 4 / ((d_H <= d_V) ? d_H : d_V);
+		slice = CONSTANT / ((d_H <= d_V) ? d_H : d_V);
+		//printf("%d\t%d\t%d\n", d_H, d_V, col);
 		draw_col(env, col, slice);
-		angle -= (M_PI / 960);
+		angle -= ANGLE_SHIFT; //put angle shift and FOV into struct to make FOV changeable
 		if (angle < 0)
 			angle += (2 * M_PI);
-		col += 4;
+		col++;
 	}
 	mlx_put_image_to_window(env->mlx, env->win, env->img, 0, 0);
 	env->drawn = 1;

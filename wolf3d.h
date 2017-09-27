@@ -6,7 +6,7 @@
 /*   By: lyoung <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/13 11:41:41 by lyoung            #+#    #+#             */
-/*   Updated: 2017/07/21 16:21:07 by lyoung           ###   ########.fr       */
+/*   Updated: 2017/08/22 11:36:41 by lyoung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,22 @@
 # include "minilibx/mlx.h"
 # include <math.h>
 
-# define WIN_W 320
-# define WIN_H 200
-# define HALF_W 160
-# define HALF_H 100
-# define SCALE 64
-# define FOV M_PI / 3
-# define SPEED 4
+# define WIN_W 1280
+# define WIN_H 800
+# define HALF_W WIN_W / 2
+# define HALF_H WIN_H / 2
+# define SCALE 262144
+# define FOV M_PI / 2
+# define CONSTANT SCALE * 980
+# define ANGLE_SHIFT FOV / WIN_W
+# define MOVE_SPEED 5 * (SCALE / 64)
+# define TURN_SPEED M_PI / 64
+# define SMOG 50
+
+# define KEY_W 13
+# define KEY_A 0
+# define KEY_S 1
+# define KEY_D 2
 
 typedef struct	s_ixy
 {
@@ -60,8 +69,8 @@ typedef struct		s_env
 	int				endian;
 	struct s_map	map;
 	struct s_player	player;
-	int				constant;
 	int				drawn;
+	int				color;
 }					t_env;
 
 /*
@@ -77,6 +86,11 @@ void	print_grid(t_env *env);
 ** --------------- ray_cast.c --------------
 */
 
+int		check_grid(t_env *env, int x, int y);
+int		horizontal_ray(t_env *env, double angle);
+int		vertical_ray(t_env *env, double angle);
+void	draw_col(t_env *env, int col, int slice);
+void	clear_img(int *pixels);
 void	ray_cast(t_env *env);
 
 /*
@@ -84,5 +98,6 @@ void	ray_cast(t_env *env);
 */
 
 int		key_command(int key, t_env *env);
+int		exit_hook(int key, t_env *env);
 
 #endif

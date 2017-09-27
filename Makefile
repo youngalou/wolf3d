@@ -6,12 +6,12 @@
 #    By: lyoung <marvin@42.fr>                      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/06/07 13:21:13 by lyoung            #+#    #+#              #
-#    Updated: 2017/07/19 11:19:04 by lyoung           ###   ########.fr        #
+#    Updated: 2017/08/21 10:48:35 by lyoung           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = wolf3d
-CFLAG = -Wall -Werror -Wextra
+CFLAG = -Wall -Werror -Wextra -g
 MLXFLAG = -framework OpenGL -framework AppKit
 MLX = minilibx/libmlx.a
 LIBFT = libft/libft.a

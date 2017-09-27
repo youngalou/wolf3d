@@ -6,7 +6,7 @@
 /*   By: lyoung <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/19 11:14:26 by lyoung            #+#    #+#             */
-/*   Updated: 2017/07/21 16:28:17 by lyoung           ###   ########.fr       */
+/*   Updated: 2017/08/22 11:18:38 by lyoung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 
 int		key_command(int key, t_env *env)
 {
+	int		move_x;
+	int		move_y;
+
 	if (key == 53)
 		exit(0);
 	if (key == 123 || key == 124 || key == 13 || (key >= 0 && key <= 2))
@@ -21,39 +24,59 @@ int		key_command(int key, t_env *env)
 		if (key == 123 || key == 124)
 		{
 			if (key == 123)
-				env->player.dir.x += M_PI / SCALE;
+				env->player.dir.x += TURN_SPEED;
 			else if (key == 124)
-				env->player.dir.x -= M_PI / SCALE;
+				env->player.dir.x -= TURN_SPEED;
 			if (env->player.dir.x > 2 * M_PI)
 				env->player.dir.x -= 2 * M_PI;
 			else if (env->player.dir.x < 0)
 				env->player.dir.x += 2 * M_PI;
 		}
-		else if (key == 13 || (key >= 0 && key <= 2))
+		else if (key == KEY_W || (key >= KEY_A && key <= KEY_D))
 		{
-			if (key == 13)
+			move_x = cos(env->player.dir.x) * MOVE_SPEED;
+			move_y = sin(env->player.dir.x) * MOVE_SPEED;
+			if (key == KEY_W)
 			{
-				env->player.pos.y -= sin(env->player.dir.x) * SPEED;
-				env->player.pos.x += cos(env->player.dir.x) * SPEED;
+				if (!check_grid(env, env->player.pos.x, env->player.pos.y - move_y))
+					env->player.pos.y -= move_y;
+				if (!check_grid(env, env->player.pos.x + move_x, env->player.pos.y))
+					env->player.pos.x += move_x;
 			}
-			else if (key == 1)
+			if (key == KEY_S)
 			{
-				env->player.pos.y += sin(env->player.dir.x) * SPEED;
-				env->player.pos.x -= cos(env->player.dir.x) * SPEED;
+				if (!check_grid(env, env->player.pos.x, env->player.pos.y + move_y))
+					env->player.pos.y += move_y;
+				if (!check_grid(env, env->player.pos.x - move_x, env->player.pos.y))
+					env->player.pos.x -= move_x;
 			}
-			else if (key == 2)
+			move_x = cos(env->player.dir.x - (M_PI / 2)) * MOVE_SPEED;
+			move_y = sin(env->player.dir.x - (M_PI / 2)) * MOVE_SPEED;
+			if (key == KEY_A)
 			{
-				env->player.pos.y -= sin(env->player.dir.x - (M_PI / 2)) * SPEED;
-				env->player.pos.x += cos(env->player.dir.x - (M_PI / 2)) * SPEED;
+				if (!check_grid(env, env->player.pos.x, env->player.pos.y + move_y))
+					env->player.pos.y += move_y;
+				if (!check_grid(env, env->player.pos.x - move_x, env->player.pos.y))
+					env->player.pos.x -= move_x;
 			}
-			else if (key == 0)
+			if (key == KEY_D)
 			{
-				env->player.pos.y += sin(env->player.dir.x - (M_PI / 2)) * SPEED;
-				env->player.pos.x -= cos(env->player.dir.x - (M_PI / 2)) * SPEED;
+				if (!check_grid(env, env->player.pos.x, env->player.pos.y - move_y))
+					env->player.pos.y -= move_y;
+				if (!check_grid(env, env->player.pos.x + move_x, env->player.pos.y))
+					env->player.pos.x += move_x;
 			}
 		}
 		//mlx_clear_window(env->mlx, env->win);
 		ray_cast(env);
 	}
+	return (0);
+}
+
+int		exit_hook(int key, t_env *env)
+{
+	(void)key;
+	(void)env;
+	exit(0);
 	return (0);
 }
