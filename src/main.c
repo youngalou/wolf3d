@@ -68,12 +68,20 @@ t_env	*init_env(void)
 	env->map.grid = 0;
 	env->map.width = 0;
 	env->map.length = 0;
-	env->player.dir.x = 0;
+	env->player.dir.x = 3 * M_PI / 2;
 	env->player.dir.y = 0;
 	env->bpp = 4;
 	env->sl = 0;
 	env->endian = 0;
 	env->drawn = 0;
+	env->key.w = 0;
+	env->key.a = 0;
+	env->key.s = 0;
+	env->key.d = 0;
+	env->key.uarr = 0;
+	env->key.darr = 0;
+	env->key.larr = 0;
+	env->key.rarr = 0;
 	return (env);
 }
 
@@ -88,7 +96,12 @@ void	print_grid(t_env *env)
 		x = 0;
 		while (x < env->map.width)
 		{
-			ft_printf("%d ", env->map.grid[y][x]);
+			if (env->player.pos.x / SCALE == x && env->player.pos.y / SCALE == y)
+				ft_printf("%{red}P %{eoc}");
+			else if (env->map.grid[y][x] > 0)
+				ft_printf("%{blue}d %{eoc}", env->map.grid[y][x]);
+			else
+				ft_printf("%d ", env->map.grid[y][x]);
 			x++;
 		}
 		ft_putchar('\n');
@@ -103,8 +116,10 @@ void	open_mlx(t_env *env)
 	env->img = mlx_new_image(env->mlx, WIN_W, WIN_H);
 	env->pixels = (int*)mlx_get_data_addr(env->img, &env->bpp, &env->sl, &env->endian);
 	ray_cast(env);
-	mlx_hook(env->win, 2, 0, key_command, env);
+	mlx_hook(env->win, 2, 0, key_press, env);
+	mlx_hook(env->win, 3, 0, key_release, env);
 	mlx_hook(env->win, 17, 0, exit_hook, env);
+	mlx_loop_hook(env->mlx, forever_loop, env);
 	mlx_loop(env->mlx);
 }
 
@@ -122,7 +137,6 @@ int		main(int argc, char **argv)
 	env = init_env();
 	fd = open(argv[1], O_RDONLY);
 	load_map(env, fd);
-	print_grid(env);
 	open_mlx(env);
 	return (0);
 }

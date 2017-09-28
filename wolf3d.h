@@ -22,16 +22,33 @@
 # define HALF_H WIN_H / 2
 # define SCALE 262144
 # define FOV M_PI / 2
-# define CONSTANT SCALE * 980
+# define CONSTANT SCALE * 1108
 # define ANGLE_SHIFT FOV / WIN_W
 # define MOVE_SPEED 5 * (SCALE / 64)
-# define TURN_SPEED M_PI / 64
-# define SMOG 50
+# define TURN_SPEED M_PI / 128
+# define SMOG 75
 
 # define KEY_W 13
 # define KEY_A 0
 # define KEY_S 1
 # define KEY_D 2
+# define KEY_LARR 123
+# define KEY_RARR 124
+# define KEY_M 46
+# define KEY_P 35
+# define KEY_ESC 53
+
+typedef struct	s_key
+{
+	int			w;
+	int			a;
+	int			s;
+	int			d;
+	int			uarr;
+	int			darr;
+	int			larr;
+	int			rarr;
+}				t_key;
 
 typedef struct	s_ixy
 {
@@ -45,10 +62,10 @@ typedef struct	s_dxy
 	double		y;
 }				t_dxy;
 
-typedef struct		s_player
+typedef struct	s_player
 {
-	struct s_ixy	pos;
-	struct s_dxy	dir;
+	t_ixy		pos;
+	t_dxy		dir;
 }				t_player;
 
 typedef struct	s_map
@@ -58,20 +75,21 @@ typedef struct	s_map
 	int			length;
 }				t_map;
 
-typedef struct		s_env
+typedef struct	s_env
 {
-	void			*mlx;
-	void			*win;
-	void			*img;
-	int				*pixels;
-	int				bpp;
-	int				sl;
-	int				endian;
-	struct s_map	map;
-	struct s_player	player;
-	int				drawn;
-	int				color;
-}					t_env;
+	void		*mlx;
+	void		*win;
+	void		*img;
+	int			*pixels;
+	int			bpp;
+	int			sl;
+	int			endian;
+	t_map		map;
+	t_player	player;
+	t_key		key;
+	int			drawn;
+	int			color;
+}				t_env;
 
 /*
 ** --------------- main.c --------------
@@ -97,7 +115,9 @@ void	ray_cast(t_env *env);
 ** --------------- key_command.c --------------
 */
 
-int		key_command(int key, t_env *env);
+int		key_press(int key, t_env *env);
+int		key_release(int key, t_env *env);
 int		exit_hook(int key, t_env *env);
+int		forever_loop(t_env *env);
 
 #endif

@@ -104,6 +104,7 @@ void	ray_cast(t_env *env)
 	if (env->drawn == 1)
 	{
 		clear_img(env->pixels);
+		mlx_clear_window(env->mlx, env->win);
 		env->drawn = 0;
 	}
 	angle = env->player.dir.x + (FOV / 2);
