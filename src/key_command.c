@@ -16,6 +16,11 @@ int		key_press(int key, t_env *env)
 {
 	if (key == KEY_ESC)
 		exit(0);
+	if (key == KEY_TAB)
+	{
+		env->player.dir.x = 3 * M_PI / 2;
+		ray_cast(env);
+	}
 	if (key == KEY_LARR || key == KEY_RARR || key == KEY_W || (key >= KEY_A && key <= KEY_D))
 	{
 		if (key == KEY_LARR || key == KEY_RARR)
@@ -128,7 +133,22 @@ int		forever_loop(t_env *env)
 			if (!check_grid(env, env->player.pos.x + move_x, env->player.pos.y))
 				env->player.pos.x += move_x;
 		}
+		if (env->mouse == 0)
+			ray_cast(env);
+	}
+	return (0);
+}
+
+int		mouse_pos(int x, int y, t_env *env)
+{
+	y = 0;
+	env->player.dir.x = -x * (2 * M_PI / WIN_W);
+	if (!env->key.larr && !env->key.rarr && !env->key.w && !env->key.a && !env->key.s && !env->key.d)
+	{
+		env->mouse = 1;
 		ray_cast(env);
 	}
+	else
+		env->mouse = 0;
 	return (0);
 }

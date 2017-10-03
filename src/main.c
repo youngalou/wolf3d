@@ -82,6 +82,7 @@ t_env	*init_env(void)
 	env->key.darr = 0;
 	env->key.larr = 0;
 	env->key.rarr = 0;
+	env->tex.bpp = 4;
 	return (env);
 }
 
@@ -99,14 +100,25 @@ void	print_grid(t_env *env)
 			if (env->player.pos.x / SCALE == x && env->player.pos.y / SCALE == y)
 				ft_printf("%{red}P %{eoc}");
 			else if (env->map.grid[y][x] > 0)
-				ft_printf("%{blue}d %{eoc}", env->map.grid[y][x]);
+				ft_printf("%{b_blue}s %{eoc}", " ");
 			else
-				ft_printf("%d ", env->map.grid[y][x]);
+				ft_printf("  ");
 			x++;
 		}
 		ft_putchar('\n');
 		y++;
 	}
+}
+
+void	init_tex(t_env *env)
+{
+	env->tex.bpp = 4;
+	env->tex.sl = 0;
+	env->tex.endian = 0;
+	env->tex.width = 64;
+	env->tex.height = 64;
+	env->tex.img = mlx_xpm_file_to_image(env->mlx, "textures/wall2h.xpm", &env->tex.width, &env->tex.height);
+	env->tex.str = (unsigned char *)mlx_get_data_addr(env->tex.img, &env->tex.bpp, &env->tex.sl, &env->tex.endian);
 }
 
 void	open_mlx(t_env *env)
@@ -115,9 +127,11 @@ void	open_mlx(t_env *env)
 	env->win = mlx_new_window(env->mlx, WIN_W, WIN_H, "WOLF3D");
 	env->img = mlx_new_image(env->mlx, WIN_W, WIN_H);
 	env->pixels = (int*)mlx_get_data_addr(env->img, &env->bpp, &env->sl, &env->endian);
+	init_tex(env);
 	ray_cast(env);
 	mlx_hook(env->win, 2, 0, key_press, env);
 	mlx_hook(env->win, 3, 0, key_release, env);
+	mlx_hook(env->win, 6, 0, mouse_pos, env);
 	mlx_hook(env->win, 17, 0, exit_hook, env);
 	mlx_loop_hook(env->mlx, forever_loop, env);
 	mlx_loop(env->mlx);

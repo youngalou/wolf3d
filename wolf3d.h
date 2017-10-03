@@ -20,13 +20,12 @@
 # define WIN_H 800
 # define HALF_W WIN_W / 2
 # define HALF_H WIN_H / 2
-# define SCALE 262144
+# define SCALE (64 * 4096)
 # define FOV M_PI / 2
 # define CONSTANT SCALE * 1108
 # define ANGLE_SHIFT FOV / WIN_W
 # define MOVE_SPEED 5 * (SCALE / 64)
 # define TURN_SPEED M_PI / 128
-# define SMOG 75
 
 # define KEY_W 13
 # define KEY_A 0
@@ -37,6 +36,7 @@
 # define KEY_M 46
 # define KEY_P 35
 # define KEY_ESC 53
+# define KEY_TAB 48
 
 typedef struct	s_key
 {
@@ -75,6 +75,31 @@ typedef struct	s_map
 	int			length;
 }				t_map;
 
+typedef struct	s_rgb
+{
+	int			r;
+	int			g;
+	int			b;
+	int			rgb;
+}				t_rgb;
+
+typedef struct			s_img
+{
+	void				*img;
+	unsigned char		*str;
+	int					bpp;
+	int					sl;
+	int					endian;
+	int					width;
+	int					height;
+}						t_img;
+
+typedef struct	s_tex
+{
+	void			*img;
+	unsigned char	*str;
+}				t_tex;
+
 typedef struct	s_env
 {
 	void		*mlx;
@@ -88,7 +113,11 @@ typedef struct	s_env
 	t_player	player;
 	t_key		key;
 	int			drawn;
-	int			color;
+	t_rgb		color;
+	int			mouse;
+	t_img		tex;
+	int			x0;
+	int			y0;
 }				t_env;
 
 /*
@@ -107,7 +136,7 @@ void	print_grid(t_env *env);
 int		check_grid(t_env *env, int x, int y);
 int		horizontal_ray(t_env *env, double angle);
 int		vertical_ray(t_env *env, double angle);
-void	draw_col(t_env *env, int col, int slice);
+void	draw_col(t_env *env, int col, int slice, int off);
 void	clear_img(int *pixels);
 void	ray_cast(t_env *env);
 
@@ -119,5 +148,6 @@ int		key_press(int key, t_env *env);
 int		key_release(int key, t_env *env);
 int		exit_hook(int key, t_env *env);
 int		forever_loop(t_env *env);
+int		mouse_pos(int x, int y, t_env *env);
 
 #endif
