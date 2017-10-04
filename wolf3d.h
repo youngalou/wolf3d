@@ -22,10 +22,12 @@
 # define HALF_H WIN_H / 2
 # define SCALE (64 * 4096)
 # define FOV M_PI / 2
-# define CONSTANT SCALE * 1108
+# define CONSTANT SCALE * 880
 # define ANGLE_SHIFT FOV / WIN_W
 # define MOVE_SPEED 5 * (SCALE / 64)
 # define TURN_SPEED M_PI / 128
+# define COLLISION 5
+# define NUM_TEX 5
 
 # define KEY_W 13
 # define KEY_A 0
@@ -85,20 +87,14 @@ typedef struct	s_rgb
 
 typedef struct			s_img
 {
-	void				*img;
-	unsigned char		*str;
+	void				*img[NUM_TEX];
+	unsigned char		*str[NUM_TEX];
 	int					bpp;
 	int					sl;
 	int					endian;
 	int					width;
 	int					height;
 }						t_img;
-
-typedef struct	s_tex
-{
-	void			*img;
-	unsigned char	*str;
-}				t_tex;
 
 typedef struct	s_env
 {
@@ -112,12 +108,18 @@ typedef struct	s_env
 	t_map		map;
 	t_player	player;
 	t_key		key;
-	int			drawn;
 	t_rgb		color;
-	int			mouse;
 	t_img		tex;
+	char		*texfile[NUM_TEX];
+	int			t;
+	int			d_H;
+	int			d_V;
+	int			tex_H;
+	int			tex_V;
 	int			x0;
 	int			y0;
+	int			drawn;
+	int			mouse;
 }				t_env;
 
 /*
@@ -134,9 +136,9 @@ void	print_grid(t_env *env);
 */
 
 int		check_grid(t_env *env, int x, int y);
-int		horizontal_ray(t_env *env, double angle);
-int		vertical_ray(t_env *env, double angle);
-void	draw_col(t_env *env, int col, int slice, int off);
+void	horizontal_ray(t_env *env, double angle);
+void	vertical_ray(t_env *env, double angle);
+void	draw_col(t_env *env, int data[4]);
 void	clear_img(int *pixels);
 void	ray_cast(t_env *env);
 

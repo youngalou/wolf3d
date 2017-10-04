@@ -105,32 +105,32 @@ int		forever_loop(t_env *env)
 		move_y = sin(env->player.dir.x) * MOVE_SPEED;
 		if (env->key.w)
 		{
-			if (!check_grid(env, env->player.pos.x, env->player.pos.y - move_y))
+			if (!check_grid(env, env->player.pos.x, env->player.pos.y - (COLLISION * move_y)))
 				env->player.pos.y -= move_y;
-			if (!check_grid(env, env->player.pos.x + move_x, env->player.pos.y))
+			if (!check_grid(env, env->player.pos.x + (COLLISION * move_x), env->player.pos.y))
 				env->player.pos.x += move_x;
 		}
 		if (env->key.s)
 		{
-			if (!check_grid(env, env->player.pos.x, env->player.pos.y + move_y))
+			if (!check_grid(env, env->player.pos.x, env->player.pos.y + (COLLISION * move_y)))
 				env->player.pos.y += move_y;
-			if (!check_grid(env, env->player.pos.x - move_x, env->player.pos.y))
+			if (!check_grid(env, env->player.pos.x - (COLLISION * move_x), env->player.pos.y))
 				env->player.pos.x -= move_x;
 		}
 		move_x = cos(env->player.dir.x - (M_PI / 2)) * MOVE_SPEED;
 		move_y = sin(env->player.dir.x - (M_PI / 2)) * MOVE_SPEED;
 		if (env->key.a)
 		{
-			if (!check_grid(env, env->player.pos.x, env->player.pos.y + move_y))
+			if (!check_grid(env, env->player.pos.x, env->player.pos.y + (COLLISION * move_y)))
 				env->player.pos.y += move_y;
-			if (!check_grid(env, env->player.pos.x - move_x, env->player.pos.y))
+			if (!check_grid(env, env->player.pos.x - (COLLISION * move_x), env->player.pos.y))
 				env->player.pos.x -= move_x;
 		}
 		if (env->key.d)
 		{
-			if (!check_grid(env, env->player.pos.x, env->player.pos.y - move_y))
+			if (!check_grid(env, env->player.pos.x, env->player.pos.y - (COLLISION * move_y)))
 				env->player.pos.y -= move_y;
-			if (!check_grid(env, env->player.pos.x + move_x, env->player.pos.y))
+			if (!check_grid(env, env->player.pos.x + (COLLISION * move_x), env->player.pos.y))
 				env->player.pos.x += move_x;
 		}
 		if (env->mouse == 0)

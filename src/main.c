@@ -14,6 +14,9 @@
 
 void	init_map(t_env *env, char *line)
 {
+	char	*tmp;
+
+	tmp = line;
 	env->map.width = ft_atoi(line);
 	while (*line >= '0' && *line <= '9')
 		line++;
@@ -30,6 +33,7 @@ void	init_map(t_env *env, char *line)
 	while (*line == ' ' || *line == '\t')
 		line++;
 	env->player.pos.y = (ft_atoi(line) * SCALE) + (SCALE / 2);
+	ft_strdel(&tmp);
 }
 
 void	load_map(t_env *env, int fd)
@@ -82,7 +86,6 @@ t_env	*init_env(void)
 	env->key.darr = 0;
 	env->key.larr = 0;
 	env->key.rarr = 0;
-	env->tex.bpp = 4;
 	return (env);
 }
 
@@ -110,15 +113,36 @@ void	print_grid(t_env *env)
 	}
 }
 
+void	set_texfile(t_env *env)
+{
+	env->texfile[0] = NULL;
+	env->texfile[1] = "textures/wall1h.xpm";
+	env->texfile[2] = "textures/wall2h.xpm";
+	env->texfile[3] = "textures/wall3h.xpm";
+	env->texfile[4] = "textures/wall4v.xpm";
+}
+
+void	load_textures(t_env *env)
+{
+	int		i;
+
+	i = 0;
+	while (i++ < NUM_TEX - 1)
+	{
+		env->tex.img[i] = mlx_xpm_file_to_image(env->mlx, env->texfile[i], &env->tex.width, &env->tex.height);
+		env->tex.str[i] = (unsigned char *)mlx_get_data_addr(env->tex.img[i], &env->tex.bpp, &env->tex.sl, &env->tex.endian);
+	}
+}
+
 void	init_tex(t_env *env)
 {
+	set_texfile(env);
 	env->tex.bpp = 4;
 	env->tex.sl = 0;
 	env->tex.endian = 0;
 	env->tex.width = 64;
 	env->tex.height = 64;
-	env->tex.img = mlx_xpm_file_to_image(env->mlx, "textures/wall2h.xpm", &env->tex.width, &env->tex.height);
-	env->tex.str = (unsigned char *)mlx_get_data_addr(env->tex.img, &env->tex.bpp, &env->tex.sl, &env->tex.endian);
+	load_textures(env);
 }
 
 void	open_mlx(t_env *env)
