@@ -69,7 +69,6 @@ void	vertical_ray(t_env *env, double angle)
 
 void	draw_col(t_env *env, int data[4])
 {
-	int		color;
 	int		y;
 	int		floor;
 	double	i;
@@ -85,9 +84,12 @@ void	draw_col(t_env *env, int data[4])
 	{
 		if (y >= 0 && y < WIN_H)
 		{
-			color = env->tex.str[2][data[OFF] + ((int)i * 256)];
-			//color = ((color >> 16) * smog * 65536) + ((color >> 8) * smog * 256) + (color * smog);
-			env->pixels[data[COL] + (y * (WIN_W))] = color;
+			env->color.rgb = env->tex.str[data[TEX]][data[OFF] + ((int)i * 256)];
+			// env->color.r = env->color.rgb >> 16;
+			// env->color.g = (env->color.rgb >> 8) & 0xFF;
+			// env->color.b = env->color.rgb & 0xFF;
+			// env->color.rgb = ((env->color.r << 16) * smog) + ((env->color.g << 8) * smog) + (env->color.b * smog);
+			env->pixels[data[COL] + (y * (WIN_W))] = env->color.rgb;
 		}
 		i += (64 / (double)data[SLICE]);
 		y++;
@@ -136,10 +138,10 @@ void	ray_cast(t_env *env)
 		data[COL]++;
 	}
 	mlx_put_image_to_window(env->mlx, env->win, env->img, 0, 0);
-	mlx_put_image_to_window(env->mlx, env->win, env->tex.img[1], 0, 0);
-	mlx_put_image_to_window(env->mlx, env->win, env->tex.img[2], 64, 0);
-	mlx_put_image_to_window(env->mlx, env->win, env->tex.img[3], 128, 0);
-	mlx_put_image_to_window(env->mlx, env->win, env->tex.img[4], 192, 0);
+	mlx_put_image_to_window(env->mlx, env->win, env->tex.img[env->anim], 880, 672);
+	if (env->won)
+	{
+		mlx_put_image_to_window(env->mlx, env->win, env->tex.img[5], HALF_W - 210, HALF_H - 150);
+	}
 	env->drawn = 1;
-	env->mouse = 0;
 }

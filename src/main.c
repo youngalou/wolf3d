@@ -33,6 +33,16 @@ void	init_map(t_env *env, char *line)
 	while (*line == ' ' || *line == '\t')
 		line++;
 	env->player.pos.y = (ft_atoi(line) * SCALE) + (SCALE / 2);
+	while (*line >= '0' && *line <= '9')
+		line++;
+	while (*line == ' ' || *line == '\t')
+		line++;
+	env->map.exit.x = ft_atoi(line);
+	while (*line >= '0' && *line <= '9')
+		line++;
+	while (*line == ' ' || *line == '\t')
+		line++;
+	env->map.exit.y = ft_atoi(line);
 	ft_strdel(&tmp);
 }
 
@@ -72,7 +82,7 @@ t_env	*init_env(void)
 	env->map.grid = 0;
 	env->map.width = 0;
 	env->map.length = 0;
-	env->player.dir.x = 3 * M_PI / 2;
+	env->player.dir.x = (3 * M_PI) / 2;
 	env->player.dir.y = 0;
 	env->bpp = 4;
 	env->sl = 0;
@@ -86,6 +96,12 @@ t_env	*init_env(void)
 	env->key.darr = 0;
 	env->key.larr = 0;
 	env->key.rarr = 0;
+	env->key.space = 0;
+	env->mouse.init = 0;
+	env->won = 0;
+	env->shoot = 0;
+	env->anim = 6;
+	env->wait = 0;
 	return (env);
 }
 
@@ -102,8 +118,10 @@ void	print_grid(t_env *env)
 		{
 			if (env->player.pos.x / SCALE == x && env->player.pos.y / SCALE == y)
 				ft_printf("%{red}P %{eoc}");
-			else if (env->map.grid[y][x] > 0)
+			else if (env->map.grid[y][x] > 0 && env->map.grid[y][x] < 9)
 				ft_printf("%{b_blue}s %{eoc}", " ");
+			else if (env->map.exit.x == x && env->map.exit.y == y)
+				ft_printf("%{b_green}s %{eoc}", " ");
 			else
 				ft_printf("  ");
 			x++;
@@ -120,6 +138,12 @@ void	set_texfile(t_env *env)
 	env->texfile[2] = "textures/wall2h.xpm";
 	env->texfile[3] = "textures/wall3h.xpm";
 	env->texfile[4] = "textures/wall4v.xpm";
+	env->texfile[5] = "textures/you-won.xpm";
+	env->texfile[6] = "textures/pistol1.xpm";
+	env->texfile[7] = "textures/pistol2.xpm";
+	env->texfile[8] = "textures/pistol3.xpm";
+	env->texfile[9] = "textures/pistol4.xpm";
+	env->texfile[10] = "textures/pistol5.xpm";
 }
 
 void	load_textures(t_env *env)

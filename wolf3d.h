@@ -15,6 +15,7 @@
 # include "libft/superlibft.h"
 # include "minilibx/mlx.h"
 # include <math.h>
+# include <stdio.h> //make sure to remove this include!!!
 
 # define WIN_W 1280
 # define WIN_H 800
@@ -27,7 +28,8 @@
 # define MOVE_SPEED 5 * (SCALE / 64)
 # define TURN_SPEED M_PI / 128
 # define COLLISION 5
-# define NUM_TEX 5
+# define NUM_TEX 11
+# define WAIT 2
 
 # define KEY_W 13
 # define KEY_A 0
@@ -36,21 +38,9 @@
 # define KEY_LARR 123
 # define KEY_RARR 124
 # define KEY_M 46
-# define KEY_P 35
+# define KEY_SPACE 49
 # define KEY_ESC 53
 # define KEY_TAB 48
-
-typedef struct	s_key
-{
-	int			w;
-	int			a;
-	int			s;
-	int			d;
-	int			uarr;
-	int			darr;
-	int			larr;
-	int			rarr;
-}				t_key;
 
 typedef struct	s_ixy
 {
@@ -75,6 +65,7 @@ typedef struct	s_map
 	int			**grid;
 	int			width;
 	int			length;
+	t_ixy		exit;
 }				t_map;
 
 typedef struct	s_rgb
@@ -85,16 +76,35 @@ typedef struct	s_rgb
 	int			rgb;
 }				t_rgb;
 
-typedef struct			s_img
+typedef struct		s_img
 {
-	void				*img[NUM_TEX];
-	unsigned char		*str[NUM_TEX];
-	int					bpp;
-	int					sl;
-	int					endian;
-	int					width;
-	int					height;
-}						t_img;
+	void			*img[NUM_TEX];
+	unsigned char	*str[NUM_TEX];
+	int				bpp;
+	int				sl;
+	int				endian;
+	int				width;
+	int				height;
+}					t_img;
+
+typedef struct	s_key
+{
+	int			w;
+	int			a;
+	int			s;
+	int			d;
+	int			uarr;
+	int			darr;
+	int			larr;
+	int			rarr;
+	int			space;
+}				t_key;
+
+typedef struct	s_mouse
+{
+	int			init;
+	t_ixy		pos;
+}				t_mouse;
 
 typedef struct	s_env
 {
@@ -107,9 +117,10 @@ typedef struct	s_env
 	int			endian;
 	t_map		map;
 	t_player	player;
-	t_key		key;
 	t_rgb		color;
 	t_img		tex;
+	t_key		key;
+	t_mouse		mouse;
 	char		*texfile[NUM_TEX];
 	int			t;
 	int			d_H;
@@ -119,7 +130,10 @@ typedef struct	s_env
 	int			x0;
 	int			y0;
 	int			drawn;
-	int			mouse;
+	int			won;
+	int			shoot;
+	int			anim;
+	int			wait;
 }				t_env;
 
 /*

@@ -21,7 +21,7 @@ int		key_press(int key, t_env *env)
 		env->player.dir.x = 3 * M_PI / 2;
 		ray_cast(env);
 	}
-	if (key == KEY_LARR || key == KEY_RARR || key == KEY_W || (key >= KEY_A && key <= KEY_D))
+	if (key == KEY_LARR || key == KEY_RARR || key == KEY_W || (key >= KEY_A && key <= KEY_D) || key == KEY_SPACE)
 	{
 		if (key == KEY_LARR || key == KEY_RARR)
 		{
@@ -41,17 +41,20 @@ int		key_press(int key, t_env *env)
 			if (key == KEY_D)
 				env->key.d = 1;
 		}
+		if (key == KEY_SPACE && !env->key.space)
+		{
+			env->key.space = 1;
+			env->shoot = 1;
+		}
 	}
 	if (key == KEY_M)
-	{
 		print_grid(env);
-	}
 	return (0);
 }
 
 int		key_release(int key, t_env *env)
 {
-	if (key == KEY_LARR || key == KEY_RARR || key == KEY_W || (key >= KEY_A && key <= KEY_D))
+	if (key == KEY_LARR || key == KEY_RARR || key == KEY_W || (key >= KEY_A && key <= KEY_D) || key == KEY_SPACE)
 	{
 		if (key == KEY_LARR || key == KEY_RARR)
 		{
@@ -71,6 +74,8 @@ int		key_release(int key, t_env *env)
 			if (key == KEY_D)
 				env->key.d = 0;
 		}
+		if (key == KEY_SPACE)
+			env->key.space = 0;
 	}
 	return (0);
 }
@@ -88,7 +93,7 @@ int		forever_loop(t_env *env)
 	int		move_x;
 	int		move_y;
 
-	if (env->key.larr || env->key.rarr || env->key.w || env->key.a || env->key.s || env->key.d)
+	if (env->key.larr || env->key.rarr || env->key.w || env->key.a || env->key.s || env->key.d || env->shoot)
 	{
 		if (env->key.larr || env->key.rarr)
 		{
@@ -133,22 +138,45 @@ int		forever_loop(t_env *env)
 			if (!check_grid(env, env->player.pos.x + (COLLISION * move_x), env->player.pos.y))
 				env->player.pos.x += move_x;
 		}
-		if (env->mouse == 0)
-			ray_cast(env);
+		if (env->shoot)
+		{
+			env->wait++;
+			if (env->wait % 2 == 0)
+			{
+				env->anim++;
+				if (env->anim > 10)
+				{
+					env->anim = 6;
+					env->shoot = 0;
+					env->wait = 0;
+				}
+			}
+		}
+		if (env->player.pos.x / SCALE == env->map.exit.x && env->player.pos.y / SCALE == env->map.exit.y)
+			env->won = 1;
+		ray_cast(env);
 	}
 	return (0);
 }
 
 int		mouse_pos(int x, int y, t_env *env)
 {
-	y = 0;
-	env->player.dir.x = -x * (2 * M_PI / WIN_W);
-	if (!env->key.larr && !env->key.rarr && !env->key.w && !env->key.a && !env->key.s && !env->key.d)
+	if (!env->mouse.init)
 	{
-		env->mouse = 1;
-		ray_cast(env);
+		env->mouse.init = 1;
+		env->mouse.pos.x = x;
+		env->mouse.pos.y = y;
+		return (0);
 	}
-	else
-		env->mouse = 0;
+	y = 0;
+	env->player.dir.x -= (x - env->mouse.pos.x) * (2 * M_PI / WIN_W);
+	if (env->player.dir.x < 0)
+		env->player.dir.x += 2 * M_PI;
+	else if (env->player.dir.x > 2 * M_PI)
+		env->player.dir.x -= 2 * M_PI;
+	if (!env->key.larr && !env->key.rarr && !env->key.w && !env->key.a && !env->key.s && !env->key.d)
+		ray_cast(env);
+	env->mouse.pos.x = x;
+	env->mouse.pos.y = y;
 	return (0);
 }
