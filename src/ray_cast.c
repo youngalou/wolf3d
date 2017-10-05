@@ -138,10 +138,8 @@ void	ray_cast(t_env *env)
 		data[COL]++;
 	}
 	mlx_put_image_to_window(env->mlx, env->win, env->img, 0, 0);
-	mlx_put_image_to_window(env->mlx, env->win, env->tex.img[env->anim], 880, 672);
+	mlx_put_image_to_window(env->mlx, env->win, env->weapon.img[env->anim], HALF_W - (GUN_W / 2), WIN_H - GUN_H);
 	if (env->won)
-	{
 		mlx_put_image_to_window(env->mlx, env->win, env->tex.img[5], HALF_W - 210, HALF_H - 150);
-	}
 	env->drawn = 1;
 }

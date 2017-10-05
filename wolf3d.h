@@ -28,8 +28,16 @@
 # define MOVE_SPEED 5 * (SCALE / 64)
 # define TURN_SPEED M_PI / 128
 # define COLLISION 5
-# define NUM_TEX 11
-# define WAIT 2
+
+# define NUM_TEX 6
+# define TEX_W 64
+# define TEX_H 64
+
+
+# define GUN_W 582
+# define GUN_H 342
+# define FRAMES 11
+# define WAIT 3
 
 # define KEY_W 13
 # define KEY_A 0
@@ -78,8 +86,8 @@ typedef struct	s_rgb
 
 typedef struct		s_img
 {
-	void			*img[NUM_TEX];
-	unsigned char	*str[NUM_TEX];
+	void			*img[FRAMES];
+	unsigned char	*str[FRAMES];
 	int				bpp;
 	int				sl;
 	int				endian;
@@ -119,9 +127,11 @@ typedef struct	s_env
 	t_player	player;
 	t_rgb		color;
 	t_img		tex;
+	t_img		weapon;
 	t_key		key;
 	t_mouse		mouse;
 	char		*texfile[NUM_TEX];
+	char		*gunfile[FRAMES];
 	int			t;
 	int			d_H;
 	int			d_V;
@@ -142,6 +152,8 @@ typedef struct	s_env
 
 void	init_map(t_env *env, char *line);
 void	load_map(t_env *env, int fd);
+void	load_assets(t_env *env);
+void	reset(t_env *env);
 t_env	*init_env(void);
 void	print_grid(t_env *env);
 

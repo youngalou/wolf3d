@@ -17,10 +17,7 @@ int		key_press(int key, t_env *env)
 	if (key == KEY_ESC)
 		exit(0);
 	if (key == KEY_TAB)
-	{
-		env->player.dir.x = 3 * M_PI / 2;
-		ray_cast(env);
-	}
+		reset(env);
 	if (key == KEY_LARR || key == KEY_RARR || key == KEY_W || (key >= KEY_A && key <= KEY_D) || key == KEY_SPACE)
 	{
 		if (key == KEY_LARR || key == KEY_RARR)
@@ -108,6 +105,7 @@ int		forever_loop(t_env *env)
 		}
 		move_x = cos(env->player.dir.x) * MOVE_SPEED;
 		move_y = sin(env->player.dir.x) * MOVE_SPEED;
+		//ft_printf("%d\n", env->key.w);
 		if (env->key.w)
 		{
 			if (!check_grid(env, env->player.pos.x, env->player.pos.y - (COLLISION * move_y)))
@@ -141,12 +139,12 @@ int		forever_loop(t_env *env)
 		if (env->shoot)
 		{
 			env->wait++;
-			if (env->wait % 2 == 0)
+			if (env->wait % WAIT == 0)
 			{
 				env->anim++;
-				if (env->anim > 10)
+				if (env->anim >= FRAMES)
 				{
-					env->anim = 6;
+					env->anim = 0;
 					env->shoot = 0;
 					env->wait = 0;
 				}

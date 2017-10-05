@@ -74,6 +74,27 @@ void	load_map(t_env *env, int fd)
 	}
 }
 
+void	reset(t_env *env)
+{
+	env->player.dir.x = (3 * M_PI) / 2;
+	env->player.dir.y = 0;
+	env->key.w = 0;
+	env->key.a = 0;
+	env->key.s = 0;
+	env->key.d = 0;
+	env->key.uarr = 0;
+	env->key.darr = 0;
+	env->key.larr = 0;
+	env->key.rarr = 0;
+	env->key.space = 0;
+	env->mouse.init = 0;
+	env->won = 0;
+	env->shoot = 0;
+	env->anim = 0;
+	env->wait = 0;
+	ray_cast(env);
+}
+
 t_env	*init_env(void)
 {
 	t_env	*env;
@@ -100,7 +121,7 @@ t_env	*init_env(void)
 	env->mouse.init = 0;
 	env->won = 0;
 	env->shoot = 0;
-	env->anim = 6;
+	env->anim = 0;
 	env->wait = 0;
 	return (env);
 }
@@ -134,19 +155,25 @@ void	print_grid(t_env *env)
 void	set_texfile(t_env *env)
 {
 	env->texfile[0] = NULL;
-	env->texfile[1] = "textures/wall1h.xpm";
-	env->texfile[2] = "textures/wall2h.xpm";
-	env->texfile[3] = "textures/wall3h.xpm";
-	env->texfile[4] = "textures/wall4v.xpm";
-	env->texfile[5] = "textures/you-won.xpm";
-	env->texfile[6] = "textures/pistol1.xpm";
-	env->texfile[7] = "textures/pistol2.xpm";
-	env->texfile[8] = "textures/pistol3.xpm";
-	env->texfile[9] = "textures/pistol4.xpm";
-	env->texfile[10] = "textures/pistol5.xpm";
+	env->texfile[1] = "assets/textures/wall1h.xpm";
+	env->texfile[2] = "assets/textures/wall2h.xpm";
+	env->texfile[3] = "assets/textures/wall3h.xpm";
+	env->texfile[4] = "assets/textures/wall4v.xpm";
+	env->texfile[5] = "assets/textures/you-won.xpm";
+	env->gunfile[0] = "assets/weapons/shotgun1.xpm";
+	env->gunfile[1] = "assets/weapons/shotgun2.xpm";
+	env->gunfile[2] = "assets/weapons/shotgun3.xpm";
+	env->gunfile[3] = "assets/weapons/shotgun4.xpm";
+	env->gunfile[4] = "assets/weapons/shotgun5.xpm";
+	env->gunfile[5] = "assets/weapons/shotgun6.xpm";
+	env->gunfile[6] = "assets/weapons/shotgun7.xpm";
+	env->gunfile[7] = "assets/weapons/shotgun8.xpm";
+	env->gunfile[8] = "assets/weapons/shotgun9.xpm";
+	env->gunfile[9] = "assets/weapons/shotgun10.xpm";
+	env->gunfile[10] = "assets/weapons/shotgun11.xpm";
 }
 
-void	load_textures(t_env *env)
+void	load_assets(t_env *env)
 {
 	int		i;
 
@@ -156,6 +183,12 @@ void	load_textures(t_env *env)
 		env->tex.img[i] = mlx_xpm_file_to_image(env->mlx, env->texfile[i], &env->tex.width, &env->tex.height);
 		env->tex.str[i] = (unsigned char *)mlx_get_data_addr(env->tex.img[i], &env->tex.bpp, &env->tex.sl, &env->tex.endian);
 	}
+	i = -1;
+	while (i++ < FRAMES - 1)
+	{
+		env->weapon.img[i] = mlx_xpm_file_to_image(env->mlx, env->gunfile[i], &env->weapon.width, &env->weapon.height);
+		env->weapon.str[i] = (unsigned char *)mlx_get_data_addr(env->weapon.img[i], &env->weapon.bpp, &env->weapon.sl, &env->weapon.endian);
+	}
 }
 
 void	init_tex(t_env *env)
@@ -164,9 +197,15 @@ void	init_tex(t_env *env)
 	env->tex.bpp = 4;
 	env->tex.sl = 0;
 	env->tex.endian = 0;
-	env->tex.width = 64;
-	env->tex.height = 64;
-	load_textures(env);
+	env->tex.width = TEX_W;
+	env->tex.height = TEX_H;
+	env->weapon.bpp = 4;
+	env->weapon.sl = 0;
+	env->weapon.endian = 0;
+	env->weapon.width = GUN_W;
+	env->weapon.height = GUN_H;
+	load_assets(env);
+	reset(env);
 }
 
 void	open_mlx(t_env *env)
