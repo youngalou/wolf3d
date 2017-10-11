@@ -198,8 +198,8 @@ void	init_tex(t_env *env)
 	env->tex.bpp = 4;
 	env->tex.sl = 0;
 	env->tex.endian = 0;
-	env->tex.width = TEX_W;
-	env->tex.height = TEX_H;
+	env->tex.width = TEX_RES;
+	env->tex.height = TEX_RES;
 	env->weapon.bpp = 4;
 	env->weapon.sl = 0;
 	env->weapon.endian = 0;

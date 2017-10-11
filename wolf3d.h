@@ -19,17 +19,18 @@
 
 
 # define DISTANCETOPLANE 640
-# define FLOOR_CEILING_CONSTANT 288030;
+# define FL_CONSTANT 362740
+// 288030 // 880     |||||   362740 // 1108  (inversely correlated with WALL_HEIGHT)
 
 # define WIN_W 1280
 # define WIN_H 800
 # define HALF_W WIN_W / 2
 # define HALF_H WIN_H / 2
 # define SCALE 262144
-# define FOV M_PI / 2
-# define CONSTANT SCALE * 880
+# define FOV M_PI / 3
+# define WALL_HEIGHT SCALE * 1108
 # define ANGLE_SHIFT FOV / WIN_W
-# define ANGLE_START (3 * M_PI / 2)
+# define ANGLE_START (M_PI / 2)
 # define MOVE_SPEED (5 * (SCALE / 64))
 # define TURN_SPEED (M_PI / 128)
 # define MOUSE_SENS (4 * M_PI / WIN_W)
@@ -222,3 +223,15 @@ env->color.rgb = ((int)(env->color.r * smog) << 16) + ((int)(env->color.g * smog
 // 	env->pixels[col + (j * (WIN_W))] = env->color.rgb;
 // 	j++;
 // }
+
+
+/*
+
+Both of these operations are very costly in terms of time complexity. After dropping these functions,
+performance has improved significantly, but there are definitely more optimizations to be made.
+1st option: Use put_img to place the skybox first, then just lay the render over it.
+			(Need to figure out how to make empty pixels not render as black)
+2nd option: Optimize floor casting. Sheer number of mathematical operations makes runtime very slow.
+			Find anything you can precalculate outside the loop.
+
+*/

@@ -73,7 +73,7 @@ void	draw_col(t_env *env, t_ray ray, int col, double angle)
 	int		sky;
 	t_ixy	dist;
 
-	slice = CONSTANT / ray.dist;
+	slice = WALL_HEIGHT / ray.dist;
 	if (slice > 5000)
 	 	slice = 5000;
 	smog = (slice < WIN_W) ? ((double)slice / WIN_H) : 1.5;
@@ -100,12 +100,13 @@ void	draw_col(t_env *env, t_ray ray, int col, double angle)
 	}
 	while (y < WIN_H)
 	{
-		straight = ((double)HALF_H / ((double)y - (double)HALF_H)) * 288030;
+		straight = ((double)HALF_H / ((double)y - (double)HALF_H)) * FL_CONSTANT;
 		real = straight / cos(angle - env->player.dir.x);
 		dist.x = env->player.pos.x + (real * cos(angle));
 		dist.y = env->player.pos.y - (real * sin(angle));
-		dist.x = (dist.x / 4096) % TEX_W;
-		dist.y = (dist.y / 4096) % TEX_H;
+		//ft_printf("%d\t%d\t%d\n", col, dist.x, dist.y);
+		dist.x = (dist.x / 4096) % TEX_RES;
+		dist.y = (dist.y / 4096) % TEX_RES;
 		env->color.rgb = env->tex.str[1][dist.x + (dist.y * TEX_RES)];
 		env->pixels[col + (y * (WIN_W))] = env->color.rgb;
 		y++;
@@ -129,12 +130,12 @@ void	ray_cast(t_env *env)
 	double	angle;
 	int		col;
 
-	if (env->drawn == 1)
-	{
-		clear_img(env->pixels);
-		mlx_clear_window(env->mlx, env->win);
-		env->drawn = 0;
-	}
+	// if (env->drawn == 1)
+	// {
+	// 	clear_img(env->pixels);
+	// 	mlx_clear_window(env->mlx, env->win);
+	// 	env->drawn = 0;
+	// }
 	angle = env->player.dir.x + (FOV / 2);
 	while (angle > 2 * M_PI)
 		angle -= (2 * M_PI);
