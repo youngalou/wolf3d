@@ -105,7 +105,6 @@ int		forever_loop(t_env *env)
 		}
 		move_x = cos(env->player.dir.x) * MOVE_SPEED;
 		move_y = sin(env->player.dir.x) * MOVE_SPEED;
-		//ft_printf("%d\n", env->key.w);
 		if (env->key.w)
 		{
 			if (!check_grid(env, env->player.pos.x, env->player.pos.y - (COLLISION * move_y)))
@@ -167,7 +166,7 @@ int		mouse_pos(int x, int y, t_env *env)
 		return (0);
 	}
 	y = 0;
-	env->player.dir.x -= (x - env->mouse.pos.x) * (2 * M_PI / WIN_W);
+	env->player.dir.x -= (x - env->mouse.pos.x) * MOUSE_SENS;
 	if (env->player.dir.x < 0)
 		env->player.dir.x += 2 * M_PI;
 	else if (env->player.dir.x > 2 * M_PI)

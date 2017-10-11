@@ -76,7 +76,7 @@ void	load_map(t_env *env, int fd)
 
 void	reset(t_env *env)
 {
-	env->player.dir.x = (3 * M_PI) / 2;
+	env->player.dir.x = ANGLE_START;
 	env->player.dir.y = 0;
 	env->key.w = 0;
 	env->key.a = 0;
@@ -103,7 +103,7 @@ t_env	*init_env(void)
 	env->map.grid = 0;
 	env->map.width = 0;
 	env->map.length = 0;
-	env->player.dir.x = (3 * M_PI) / 2;
+	env->player.dir.x = ANGLE_START;
 	env->player.dir.y = 0;
 	env->bpp = 4;
 	env->sl = 0;
@@ -160,17 +160,17 @@ void	set_texfile(t_env *env)
 	env->texfile[3] = "assets/textures/wall3h.xpm";
 	env->texfile[4] = "assets/textures/wall4v.xpm";
 	env->texfile[5] = "assets/textures/you-won.xpm";
-	env->gunfile[0] = "assets/weapons/shotgun1.xpm";
-	env->gunfile[1] = "assets/weapons/shotgun2.xpm";
-	env->gunfile[2] = "assets/weapons/shotgun3.xpm";
-	env->gunfile[3] = "assets/weapons/shotgun4.xpm";
-	env->gunfile[4] = "assets/weapons/shotgun5.xpm";
-	env->gunfile[5] = "assets/weapons/shotgun6.xpm";
-	env->gunfile[6] = "assets/weapons/shotgun7.xpm";
-	env->gunfile[7] = "assets/weapons/shotgun8.xpm";
-	env->gunfile[8] = "assets/weapons/shotgun9.xpm";
-	env->gunfile[9] = "assets/weapons/shotgun10.xpm";
-	env->gunfile[10] = "assets/weapons/shotgun11.xpm";
+	env->gunfile[0] = "assets/weapons/bolt-rifle1.xpm";
+	env->gunfile[1] = "assets/weapons/bolt-rifle2.xpm";
+	env->gunfile[2] = "assets/weapons/bolt-rifle3.xpm";
+	env->gunfile[3] = "assets/weapons/bolt-rifle4.xpm";
+	env->gunfile[4] = "assets/weapons/bolt-rifle5.xpm";
+	env->gunfile[5] = "assets/weapons/bolt-rifle6.xpm";
+	env->gunfile[6] = "assets/weapons/bolt-rifle7.xpm";
+	env->gunfile[7] = "assets/weapons/bolt-rifle8.xpm";
+	env->gunfile[8] = "assets/weapons/bolt-rifle9.xpm";
+	env->gunfile[9] = "assets/weapons/bolt-rifle10.xpm";
+	env->gunfile[10] = "assets/weapons/bolt-rifle11.xpm";
 }
 
 void	load_assets(t_env *env)
@@ -205,7 +205,6 @@ void	init_tex(t_env *env)
 	env->weapon.width = GUN_W;
 	env->weapon.height = GUN_H;
 	load_assets(env);
-	reset(env);
 }
 
 void	open_mlx(t_env *env)

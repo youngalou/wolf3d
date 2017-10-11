@@ -17,22 +17,27 @@
 # include <math.h>
 # include <stdio.h> //make sure to remove this include!!!
 
+
+# define DISTANCETOPLANE 640
+
+
 # define WIN_W 1280
 # define WIN_H 800
 # define HALF_W WIN_W / 2
 # define HALF_H WIN_H / 2
-# define SCALE (64 * 4096)
+# define SCALE 262144
 # define FOV M_PI / 2
 # define CONSTANT SCALE * 880
 # define ANGLE_SHIFT FOV / WIN_W
+# define ANGLE_START M_PI / 2
 # define MOVE_SPEED 5 * (SCALE / 64)
 # define TURN_SPEED M_PI / 128
+# define MOUSE_SENS 4 * M_PI / WIN_W
 # define COLLISION 5
 
 # define NUM_TEX 6
 # define TEX_W 64
 # define TEX_H 64
-
 
 # define GUN_W 582
 # define GUN_H 342
@@ -114,6 +119,14 @@ typedef struct	s_mouse
 	t_ixy		pos;
 }				t_mouse;
 
+typedef struct	s_ray
+{
+	int			dist;
+	int			off;
+	int			tex;
+	int			slice;
+}				t_ray;
+
 typedef struct	s_env
 {
 	void		*mlx;
@@ -130,9 +143,10 @@ typedef struct	s_env
 	t_img		weapon;
 	t_key		key;
 	t_mouse		mouse;
+	t_ray		H;
+	t_ray		V;
 	char		*texfile[NUM_TEX];
 	char		*gunfile[FRAMES];
-	int			t;
 	int			d_H;
 	int			d_V;
 	int			tex_H;
@@ -164,7 +178,7 @@ void	print_grid(t_env *env);
 int		check_grid(t_env *env, int x, int y);
 void	horizontal_ray(t_env *env, double angle);
 void	vertical_ray(t_env *env, double angle);
-void	draw_col(t_env *env, int data[4]);
+void	draw_col(t_env *env, t_ray ray, int col, double angle);
 void	clear_img(int *pixels);
 void	ray_cast(t_env *env);
 
