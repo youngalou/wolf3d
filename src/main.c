@@ -160,6 +160,7 @@ void	set_texfile(t_env *env)
 	env->texfile[3] = "assets/textures/wall3h.xpm";
 	env->texfile[4] = "assets/textures/wall4v.xpm";
 	env->texfile[5] = "assets/textures/you-won.xpm";
+	env->texfile[6] = "assets/textures/skybox.xpm";
 	env->gunfile[0] = "assets/weapons/bolt-rifle1.xpm";
 	env->gunfile[1] = "assets/weapons/bolt-rifle2.xpm";
 	env->gunfile[2] = "assets/weapons/bolt-rifle3.xpm";
@@ -181,13 +182,13 @@ void	load_assets(t_env *env)
 	while (i++ < NUM_TEX - 1)
 	{
 		env->tex.img[i] = mlx_xpm_file_to_image(env->mlx, env->texfile[i], &env->tex.width, &env->tex.height);
-		env->tex.str[i] = (unsigned char *)mlx_get_data_addr(env->tex.img[i], &env->tex.bpp, &env->tex.sl, &env->tex.endian);
+		env->tex.str[i] = (int *)mlx_get_data_addr(env->tex.img[i], &env->tex.bpp, &env->tex.sl, &env->tex.endian);
 	}
 	i = -1;
 	while (i++ < FRAMES - 1)
 	{
 		env->weapon.img[i] = mlx_xpm_file_to_image(env->mlx, env->gunfile[i], &env->weapon.width, &env->weapon.height);
-		env->weapon.str[i] = (unsigned char *)mlx_get_data_addr(env->weapon.img[i], &env->weapon.bpp, &env->weapon.sl, &env->weapon.endian);
+		env->weapon.str[i] = (int *)mlx_get_data_addr(env->weapon.img[i], &env->weapon.bpp, &env->weapon.sl, &env->weapon.endian);
 	}
 }
 

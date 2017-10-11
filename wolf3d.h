@@ -19,7 +19,7 @@
 
 
 # define DISTANCETOPLANE 640
-
+# define FLOOR_CEILING_CONSTANT 288030;
 
 # define WIN_W 1280
 # define WIN_H 800
@@ -29,15 +29,18 @@
 # define FOV M_PI / 2
 # define CONSTANT SCALE * 880
 # define ANGLE_SHIFT FOV / WIN_W
-# define ANGLE_START M_PI / 2
-# define MOVE_SPEED 5 * (SCALE / 64)
-# define TURN_SPEED M_PI / 128
-# define MOUSE_SENS 4 * M_PI / WIN_W
+# define ANGLE_START (3 * M_PI / 2)
+# define MOVE_SPEED (5 * (SCALE / 64))
+# define TURN_SPEED (M_PI / 128)
+# define MOUSE_SENS (4 * M_PI / WIN_W)
 # define COLLISION 5
 
-# define NUM_TEX 6
+# define NUM_TEX 7
+# define TEX_RES 64
+# define RENDER_SCALE (SCALE / TEX_RES)
 # define TEX_W 64
 # define TEX_H 64
+# define SKY_W 2500
 
 # define GUN_W 582
 # define GUN_H 342
@@ -92,7 +95,7 @@ typedef struct	s_rgb
 typedef struct		s_img
 {
 	void			*img[FRAMES];
-	unsigned char	*str[FRAMES];
+	int				*str[FRAMES];
 	int				bpp;
 	int				sl;
 	int				endian;
@@ -193,3 +196,29 @@ int		forever_loop(t_env *env);
 int		mouse_pos(int x, int y, t_env *env);
 
 #endif
+
+
+/* adding smog to walls
+
+env->color.r = env->color.rgb >> 16;
+env->color.g = (env->color.rgb >> 8) & 0xFF;
+env->color.b = env->color.rgb & 0xFF;
+env->color.rgb = ((int)(env->color.r * smog) << 16) + ((int)(env->color.g * smog) << 8) + (env->color.b * smog);
+
+*/
+
+// drawing ceiling
+
+// j = 0;
+// while (j < y)
+// {
+// 	straight = ((double)HALF_H / ((double)j - (double)HALF_H)) * 288030;
+// 	real = straight / cos(angle - env->player.dir.x);
+// 	dist.x = env->player.pos.x - (real * cos(angle));
+// 	dist.y = env->player.pos.y + (real * sin(angle));
+// 	dist.x = (dist.x / (RENDER_SCALE)) % TEX_W;
+// 	dist.y = (dist.y / (RENDER_SCALE)) % TEX_H;
+// 	env->color.rgb = env->tex.str[3][dist.x + (dist.y * TEX_RES)];
+// 	env->pixels[col + (j * (WIN_W))] = env->color.rgb;
+// 	j++;
+// }

@@ -38,8 +38,7 @@ void	horizontal_ray(t_env *env, double angle)
 	env->H.dist = fabs((env->player.pos.y - H.y) / sin(angle)) * cos(env->player.dir.x - angle);
 	if (env->H.dist < 0)
 		env->H.dist = INT_MAX;
-	env->H.off = (H.x % SCALE) / 1024;
-	env->H.off -= (env->H.off % 4);
+	env->H.off = (H.x % SCALE) / (RENDER_SCALE);
 }
 
 void	vertical_ray(t_env *env, double angle)
@@ -58,8 +57,7 @@ void	vertical_ray(t_env *env, double angle)
 	env->V.dist = fabs((env->player.pos.x - V.x) / cos(angle)) * cos(env->player.dir.x - angle);
 	if (env->V.dist < 0) //prevents tan() resulting in undefined with 90 degree angles
 		env->V.dist = INT_MAX;
-	env->V.off = (V.y % SCALE) / 1024;
-	env->V.off -= (env->V.off % 4);
+	env->V.off = (V.y % SCALE) / (RENDER_SCALE);
 }
 
 void	draw_col(t_env *env, t_ray ray, int col, double angle)
@@ -71,6 +69,8 @@ void	draw_col(t_env *env, t_ray ray, int col, double angle)
 	double	smog;
 	double	straight;
 	int		real;
+	int		j;
+	int		sky;
 	t_ixy	dist;
 
 	slice = CONSTANT / ray.dist;
@@ -79,33 +79,34 @@ void	draw_col(t_env *env, t_ray ray, int col, double angle)
 	smog = (slice < WIN_W) ? ((double)slice / WIN_H) : 1.5;
 	y = HALF_H - (slice / 2);
 	floor = y + slice;
+	j = 0;
+	while (j < y)
+	{
+		sky = angle * (SKY_W / (2 * M_PI));
+		env->color.rgb = env->tex.str[6][sky + (j * SKY_W)];
+		env->pixels[col + (j * (WIN_W))] = env->color.rgb;
+		j++;
+	}
 	i = 0;
 	while (y < floor)
 	{
 		if (y >= 0 && y < WIN_H)
 		{
-			env->color.rgb = env->tex.str[ray.tex][ray.off + ((int)i * 256)];
-			// env->color.r = env->color.rgb >> 16;
-			// env->color.g = (env->color.rgb >> 8) & 0xFF;
-			// env->color.b = env->color.rgb & 0xFF;
-			// env->color.rgb = ((env->color.r << 16) * smog) + ((env->color.g << 8) * smog) + (env->color.b * smog);
+			env->color.rgb = env->tex.str[ray.tex][ray.off + ((int)i * TEX_RES)];
 			env->pixels[col + (y * (WIN_W))] = env->color.rgb;
 		}
 		i += (64 / (double)slice);
 		y++;
 	}
-	//angle -= env->player.dir.x;
 	while (y < WIN_H)
 	{
 		straight = ((double)HALF_H / ((double)y - (double)HALF_H)) * 288030;
 		real = straight / cos(angle - env->player.dir.x);
-		//printf("%d\t%lf\t%d\n", col, straight, real);
 		dist.x = env->player.pos.x + (real * cos(angle));
 		dist.y = env->player.pos.y - (real * sin(angle));
 		dist.x = (dist.x / 4096) % TEX_W;
 		dist.y = (dist.y / 4096) % TEX_H;
-		//printf("%d\t%d\t%d\n", col, dist.x, dist.y);
-		env->color.rgb = env->tex.str[2][dist.x + (dist.y * 256)];
+		env->color.rgb = env->tex.str[1][dist.x + (dist.y * TEX_RES)];
 		env->pixels[col + (y * (WIN_W))] = env->color.rgb;
 		y++;
 	}
