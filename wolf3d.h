@@ -17,24 +17,18 @@
 # include <math.h>
 # include <stdio.h> //make sure to remove this include!!!
 
-
-# define DISTANCETOPLANE 640
-# define FL_CONSTANT 362740
-// 288030 // 880     |||||   362740 // 1108  (inversely correlated with WALL_HEIGHT)
+// # define DISTANCETOPLANE 640
 
 # define WIN_W 1280
 # define WIN_H 800
-# define HALF_W WIN_W / 2
-# define HALF_H WIN_H / 2
+# define HALF_W (WIN_W / 2)
+# define HALF_H (WIN_H / 2)
 # define SCALE 262144
-# define FOV M_PI / 3
-# define WALL_HEIGHT SCALE * 1108
-# define ANGLE_SHIFT FOV / WIN_W
-# define ANGLE_START (M_PI / 2)
-# define MOVE_SPEED (5 * (SCALE / 64))
-# define TURN_SPEED (M_PI / 128)
-# define MOUSE_SENS (4 * M_PI / WIN_W)
-# define COLLISION 5
+# define FOV (M_PI / 3)
+# define WALL_HEIGHT (SCALE * 1108)
+# define ANGLE_SHIFT (FOV / WIN_W)
+# define ANGLE_START (3 * M_PI / 2)
+# define FL_CONSTANT 362740	// 288030 // 880    ||||   362740 // 1108  (inversely correlated with WALL_HEIGHT)
 
 # define NUM_TEX 7
 # define TEX_RES 64
@@ -47,6 +41,11 @@
 # define GUN_H 342
 # define FRAMES 11
 # define WAIT 3
+
+# define MOVE_SPEED (5 * (RENDER_SCALE))
+# define TURN_SPEED (M_PI / 128)
+# define MOUSE_SENS (4 * M_PI / WIN_W)
+# define COLLISION 5
 
 # define KEY_W 13
 # define KEY_A 0

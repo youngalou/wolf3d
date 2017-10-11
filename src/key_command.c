@@ -98,9 +98,9 @@ int		forever_loop(t_env *env)
 				env->player.dir.x += TURN_SPEED;
 			if (env->key.rarr)
 				env->player.dir.x -= TURN_SPEED;
-			if (env->player.dir.x > 2 * M_PI)
+			while (env->player.dir.x > 2 * M_PI)
 				env->player.dir.x -= 2 * M_PI;
-			else if (env->player.dir.x < 0)
+			while (env->player.dir.x < 0)
 				env->player.dir.x += 2 * M_PI;
 		}
 		move_x = cos(env->player.dir.x) * MOVE_SPEED;
