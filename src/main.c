@@ -122,6 +122,7 @@ t_env	*init_env(void)
 	env->key.space = 0;
 	env->mouse.init = 0;
 	env->won = 0;
+	env->flash = 0;
 	env->gun.anim = 0;
 	env->gun.wait = 0;
 	env->gun.shoot = 0;
@@ -166,8 +167,9 @@ void	set_texfile(void)
 	g_texfile[2] = "assets/textures/wall2h.xpm";
 	g_texfile[3] = "assets/textures/wall3h.xpm";
 	g_texfile[4] = "assets/textures/wall4v.xpm";
-	g_texfile[5] = "assets/textures/you-won.xpm";
-	g_texfile[6] = "assets/textures/skybox.xpm";
+	g_texfile[5] = "assets/textures/skybox.xpm";
+	g_texfile[6] = "assets/textures/press-r.xpm";
+	g_texfile[7] = "assets/textures/you-won.xpm";
 	g_gunfile[0] = "assets/weapons/auto-rifle_idle.xpm";
 	g_gunfile[1] = "assets/weapons/auto-rifle_shoot1.xpm";
 	g_gunfile[2] = "assets/weapons/auto-rifle_shoot2.xpm";

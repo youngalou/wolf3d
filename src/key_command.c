@@ -118,10 +118,10 @@ void	animations(t_env *env)
 			env->gun.anim++;
 			if (env->gun.anim >= SHOOT)
 			{
-				env->gun.anim = 0;
-				env->gun.shoot = 0;
-				env->gun.wait = 0;
 				env->gun.ammo--;
+				env->gun.shoot = 0;
+				env->gun.anim = 0;
+				env->gun.wait = 0;
 			}
 		}
 	}
@@ -133,11 +133,12 @@ void	animations(t_env *env)
 		if (env->gun.wait % WAIT == 0)
 		{
 			env->gun.anim++;
-			if (env->gun.anim >= RELOAD)
+			if (env->gun.anim >= FRAMES)
 			{
-				env->gun.anim = 0;
 				env->gun.ammo = AMMO;
 				env->gun.reload = 0;
+				env->gun.anim = 0;
+				env->gun.wait = 0;
 			}
 		}
 	}
@@ -196,7 +197,7 @@ int		forever_loop(t_env *env)
 		if (env->player.pos.x / SCALE == env->map.exit.x && env->player.pos.y / SCALE == env->map.exit.y)
 			env->won = 1;
 		animations(env);
-		ray_cast(env);
 	}
+	ray_cast(env);
 	return (0);
 }

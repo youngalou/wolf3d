@@ -80,7 +80,7 @@ void	draw_col(t_env *env, t_ray ray, int col, double angle)
 	while (j < y)
 	{
 		sky = angle * (SKY_W / (2 * M_PI));
-		env->color.rgb = env->tex.arr[6][sky + (j * SKY_W)];
+		env->color.rgb = env->tex.arr[5][sky + (j * SKY_W)];
 		env->pixels[col + (j * (WIN_W))] = env->color.rgb;
 		j++;
 	}
@@ -152,7 +152,10 @@ void	ray_cast(t_env *env)
 	}
 	mlx_put_image_to_window(env->mlx, env->win, env->img, 0, 0);
 	mlx_put_image_to_window(env->mlx, env->win, env->weapon.img[env->gun.anim], HALF_W - (GUN_W / 2) + 100, WIN_H - GUN_H);
-	if (env->won)
-		mlx_put_image_to_window(env->mlx, env->win, env->tex.img[5], HALF_W - 210, HALF_H - 150);
+	if (env->won && env->flash < 20)
+		mlx_put_image_to_window(env->mlx, env->win, env->tex.img[7], HALF_W - 210, HALF_H - 150);
+	else if (env->gun.ammo == 0 && env->flash < 20 && !env->gun.reload)
+		mlx_put_image_to_window(env->mlx, env->win, env->tex.img[6], HALF_W - 210, HALF_H - 210);
+	env->flash += (env->flash < 40) ? 1 : -40;
 	env->drawn = 1;
 }

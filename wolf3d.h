@@ -27,10 +27,10 @@
 # define FOV (M_PI / 3)
 # define WALL_HEIGHT (SCALE * 700)
 # define ANGLE_SHIFT (FOV / WIN_W)
-# define ANGLE_START (M_PI / 2)
+# define ANGLE_START (3 * M_PI / 2)
 # define FL_CONSTANT 366478	//	366478 : 700	|	362740 : 1108	|	288030 : 880	|	268446 : 640
 
-# define NUM_TEX 7
+# define NUM_TEX 8
 # define TEX_RES 64
 # define RENDER_SCALE (SCALE / TEX_RES)
 # define TEX_W 64
@@ -39,8 +39,8 @@
 
 # define GUN_W 450
 # define GUN_H 200
+# define FRAMES 32
 # define SHOOT 3
-# define RELOAD 32
 # define WAIT 3
 # define AMMO 20
 
@@ -97,8 +97,8 @@ typedef struct	s_rgb
 
 typedef struct		s_img
 {
-	void			*img[33];
-	int				*arr[33];
+	void			*img[FRAMES];
+	int				*arr[FRAMES];
 	int				bpp;
 	int				sl;
 	int				endian;
@@ -168,6 +168,7 @@ typedef struct	s_env
 	int			y0;
 	int			drawn;
 	int			won;
+	int			flash;
 	t_gun		gun;
 }				t_env;
 
