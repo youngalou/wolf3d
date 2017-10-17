@@ -19,16 +19,16 @@
 
 // # define DISTANCETOPLANE 640
 
-# define WIN_W 1280
-# define WIN_H 800
+# define WIN_W 800
+# define WIN_H 500
 # define HALF_W (WIN_W / 2)
 # define HALF_H (WIN_H / 2)
 # define SCALE 262144
 # define FOV (M_PI / 3)
-# define WALL_HEIGHT (SCALE * 1108)
+# define WALL_HEIGHT (SCALE * 700)
 # define ANGLE_SHIFT (FOV / WIN_W)
-# define ANGLE_START (3 * M_PI / 2)
-# define FL_CONSTANT 362740	// 288030 // 880    ||||   362740 // 1108  (inversely correlated with WALL_HEIGHT)
+# define ANGLE_START (M_PI / 2)
+# define FL_CONSTANT 366478	//	366478 : 700	|	362740 : 1108	|	288030 : 880	|	268446 : 640
 
 # define NUM_TEX 7
 # define TEX_RES 64
@@ -37,10 +37,12 @@
 # define TEX_H 64
 # define SKY_W 2500
 
-# define GUN_W 582
-# define GUN_H 342
-# define FRAMES 11
+# define GUN_W 450
+# define GUN_H 200
+# define SHOOT 3
+# define RELOAD 32
 # define WAIT 3
+# define AMMO 20
 
 # define MOVE_SPEED (5 * (RENDER_SCALE))
 # define TURN_SPEED (M_PI / 128)
@@ -53,6 +55,7 @@
 # define KEY_D 2
 # define KEY_LARR 123
 # define KEY_RARR 124
+# define KEY_R 15
 # define KEY_M 46
 # define KEY_SPACE 49
 # define KEY_ESC 53
@@ -94,8 +97,8 @@ typedef struct	s_rgb
 
 typedef struct		s_img
 {
-	void			*img[FRAMES];
-	int				*str[FRAMES];
+	void			*img[33];
+	int				*arr[33];
 	int				bpp;
 	int				sl;
 	int				endian;
@@ -130,6 +133,15 @@ typedef struct	s_ray
 	int			slice;
 }				t_ray;
 
+typedef struct	s_gun
+{
+	int			anim;
+	int			wait;
+	int			shoot;
+	int			ammo;
+	int			reload;
+}				t_gun;
+
 typedef struct	s_env
 {
 	void		*mlx;
@@ -148,8 +160,6 @@ typedef struct	s_env
 	t_mouse		mouse;
 	t_ray		H;
 	t_ray		V;
-	char		*texfile[NUM_TEX];
-	char		*gunfile[FRAMES];
 	int			d_H;
 	int			d_V;
 	int			tex_H;
@@ -158,9 +168,7 @@ typedef struct	s_env
 	int			y0;
 	int			drawn;
 	int			won;
-	int			shoot;
-	int			anim;
-	int			wait;
+	t_gun		gun;
 }				t_env;
 
 /*
@@ -189,17 +197,20 @@ void	ray_cast(t_env *env);
 ** --------------- key_command.c --------------
 */
 
+int		exit_hook(int key, t_env *env);
+int		mouse_pos(int x, int y, t_env *env);
 int		key_press(int key, t_env *env);
 int		key_release(int key, t_env *env);
-int		exit_hook(int key, t_env *env);
+void	animations(t_env *env);
 int		forever_loop(t_env *env);
-int		mouse_pos(int x, int y, t_env *env);
 
 #endif
 
 
 /* adding smog to walls
+double	smog;
 
+smog = (slice < WIN_W) ? ((double)slice / WIN_H) : 1.5;
 env->color.r = env->color.rgb >> 16;
 env->color.g = (env->color.rgb >> 8) & 0xFF;
 env->color.b = env->color.rgb & 0xFF;

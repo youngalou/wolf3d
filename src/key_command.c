@@ -12,13 +12,43 @@
 
 #include "../wolf3d.h"
 
+int		exit_hook(int key, t_env *env)
+{
+	(void)key;
+	(void)env;
+	exit(0);
+	return (0);
+}
+
+int		mouse_pos(int x, int y, t_env *env)
+{
+	if (!env->mouse.init)
+	{
+		env->mouse.init = 1;
+		env->mouse.pos.x = x;
+		env->mouse.pos.y = y;
+		return (0);
+	}
+	y = 0;
+	env->player.dir.x -= (x - env->mouse.pos.x) * MOUSE_SENS;
+	if (env->player.dir.x < 0)
+		env->player.dir.x += 2 * M_PI;
+	else if (env->player.dir.x > 2 * M_PI)
+		env->player.dir.x -= 2 * M_PI;
+	if (!env->key.larr && !env->key.rarr && !env->key.w && !env->key.a && !env->key.s && !env->key.d)
+		ray_cast(env);
+	env->mouse.pos.x = x;
+	env->mouse.pos.y = y;
+	return (0);
+}
+
 int		key_press(int key, t_env *env)
 {
 	if (key == KEY_ESC)
 		exit(0);
 	if (key == KEY_TAB)
 		reset(env);
-	if (key == KEY_LARR || key == KEY_RARR || key == KEY_W || (key >= KEY_A && key <= KEY_D) || key == KEY_SPACE)
+	if (key == KEY_LARR || key == KEY_RARR || key == KEY_W || (key >= KEY_A && key <= KEY_D) || key == KEY_SPACE || key == KEY_R)
 	{
 		if (key == KEY_LARR || key == KEY_RARR)
 		{
@@ -38,11 +68,10 @@ int		key_press(int key, t_env *env)
 			if (key == KEY_D)
 				env->key.d = 1;
 		}
-		if (key == KEY_SPACE && !env->key.space)
-		{
+		if (key == KEY_SPACE)
 			env->key.space = 1;
-			env->shoot = 1;
-		}
+		if (key == KEY_R && !env->gun.shoot)
+			env->gun.reload = 1;
 	}
 	if (key == KEY_M)
 		print_grid(env);
@@ -77,12 +106,41 @@ int		key_release(int key, t_env *env)
 	return (0);
 }
 
-int		exit_hook(int key, t_env *env)
+void	animations(t_env *env)
 {
-	(void)key;
-	(void)env;
-	exit(0);
-	return (0);
+	if ((env->key.space || env->gun.shoot) && env->gun.ammo > 0 && !env->gun.reload)
+	{
+		if (env->key.space)
+			env->gun.shoot = 1;
+		env->gun.wait++;
+		if (env->gun.wait % WAIT == 0)
+		{
+			env->gun.anim++;
+			if (env->gun.anim >= SHOOT)
+			{
+				env->gun.anim = 0;
+				env->gun.shoot = 0;
+				env->gun.wait = 0;
+				env->gun.ammo--;
+			}
+		}
+	}
+	if (env->gun.reload && !env->gun.shoot)
+	{
+		if (env->gun.anim < 3)
+			env->gun.anim = 3;
+		env->gun.wait++;
+		if (env->gun.wait % WAIT == 0)
+		{
+			env->gun.anim++;
+			if (env->gun.anim >= RELOAD)
+			{
+				env->gun.anim = 0;
+				env->gun.ammo = AMMO;
+				env->gun.reload = 0;
+			}
+		}
+	}
 }
 
 int		forever_loop(t_env *env)
@@ -90,7 +148,7 @@ int		forever_loop(t_env *env)
 	int		move_x;
 	int		move_y;
 
-	if (env->key.larr || env->key.rarr || env->key.w || env->key.a || env->key.s || env->key.d || env->shoot)
+	if (env->key.larr || env->key.rarr || env->key.w || env->key.a || env->key.s || env->key.d || env->key.space || env->gun.shoot || env->gun.reload)
 	{
 		if (env->key.larr || env->key.rarr)
 		{
@@ -135,45 +193,10 @@ int		forever_loop(t_env *env)
 			if (!check_grid(env, env->player.pos.x + (COLLISION * move_x), env->player.pos.y))
 				env->player.pos.x += move_x;
 		}
-		if (env->shoot)
-		{
-			env->wait++;
-			if (env->wait % WAIT == 0)
-			{
-				env->anim++;
-				if (env->anim >= FRAMES)
-				{
-					env->anim = 0;
-					env->shoot = 0;
-					env->wait = 0;
-				}
-			}
-		}
 		if (env->player.pos.x / SCALE == env->map.exit.x && env->player.pos.y / SCALE == env->map.exit.y)
 			env->won = 1;
+		animations(env);
 		ray_cast(env);
 	}
-	return (0);
-}
-
-int		mouse_pos(int x, int y, t_env *env)
-{
-	if (!env->mouse.init)
-	{
-		env->mouse.init = 1;
-		env->mouse.pos.x = x;
-		env->mouse.pos.y = y;
-		return (0);
-	}
-	y = 0;
-	env->player.dir.x -= (x - env->mouse.pos.x) * MOUSE_SENS;
-	if (env->player.dir.x < 0)
-		env->player.dir.x += 2 * M_PI;
-	else if (env->player.dir.x > 2 * M_PI)
-		env->player.dir.x -= 2 * M_PI;
-	if (!env->key.larr && !env->key.rarr && !env->key.w && !env->key.a && !env->key.s && !env->key.d)
-		ray_cast(env);
-	env->mouse.pos.x = x;
-	env->mouse.pos.y = y;
 	return (0);
 }

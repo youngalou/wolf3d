@@ -89,9 +89,11 @@ void	reset(t_env *env)
 	env->key.space = 0;
 	env->mouse.init = 0;
 	env->won = 0;
-	env->shoot = 0;
-	env->anim = 0;
-	env->wait = 0;
+	env->gun.anim = 0;
+	env->gun.wait = 0;
+	env->gun.shoot = 0;
+	env->gun.ammo = AMMO;
+	env->gun.reload = 0;
 	ray_cast(env);
 }
 
@@ -120,9 +122,11 @@ t_env	*init_env(void)
 	env->key.space = 0;
 	env->mouse.init = 0;
 	env->won = 0;
-	env->shoot = 0;
-	env->anim = 0;
-	env->wait = 0;
+	env->gun.anim = 0;
+	env->gun.wait = 0;
+	env->gun.shoot = 0;
+	env->gun.ammo = AMMO;
+	env->gun.reload = 0;
 	return (env);
 }
 
@@ -152,26 +156,51 @@ void	print_grid(t_env *env)
 	}
 }
 
-void	set_texfile(t_env *env)
+char	*g_texfile[NUM_TEX];
+char	*g_gunfile[33];
+
+void	set_texfile(void)
 {
-	env->texfile[0] = NULL;
-	env->texfile[1] = "assets/textures/wall1h.xpm";
-	env->texfile[2] = "assets/textures/wall2h.xpm";
-	env->texfile[3] = "assets/textures/wall3h.xpm";
-	env->texfile[4] = "assets/textures/wall4v.xpm";
-	env->texfile[5] = "assets/textures/you-won.xpm";
-	env->texfile[6] = "assets/textures/skybox.xpm";
-	env->gunfile[0] = "assets/weapons/bolt-rifle1.xpm";
-	env->gunfile[1] = "assets/weapons/bolt-rifle2.xpm";
-	env->gunfile[2] = "assets/weapons/bolt-rifle3.xpm";
-	env->gunfile[3] = "assets/weapons/bolt-rifle4.xpm";
-	env->gunfile[4] = "assets/weapons/bolt-rifle5.xpm";
-	env->gunfile[5] = "assets/weapons/bolt-rifle6.xpm";
-	env->gunfile[6] = "assets/weapons/bolt-rifle7.xpm";
-	env->gunfile[7] = "assets/weapons/bolt-rifle8.xpm";
-	env->gunfile[8] = "assets/weapons/bolt-rifle9.xpm";
-	env->gunfile[9] = "assets/weapons/bolt-rifle10.xpm";
-	env->gunfile[10] = "assets/weapons/bolt-rifle11.xpm";
+	g_texfile[0] = NULL;
+	g_texfile[1] = "assets/textures/wall1h.xpm";
+	g_texfile[2] = "assets/textures/wall2h.xpm";
+	g_texfile[3] = "assets/textures/wall3h.xpm";
+	g_texfile[4] = "assets/textures/wall4v.xpm";
+	g_texfile[5] = "assets/textures/you-won.xpm";
+	g_texfile[6] = "assets/textures/skybox.xpm";
+	g_gunfile[0] = "assets/weapons/auto-rifle_idle.xpm";
+	g_gunfile[1] = "assets/weapons/auto-rifle_shoot1.xpm";
+	g_gunfile[2] = "assets/weapons/auto-rifle_shoot2.xpm";
+	g_gunfile[3] = "assets/weapons/auto-rifle_reload01.xpm";
+	g_gunfile[4] = "assets/weapons/auto-rifle_reload02.xpm";
+	g_gunfile[5] = "assets/weapons/auto-rifle_reload03.xpm";
+	g_gunfile[6] = "assets/weapons/auto-rifle_reload04.xpm";
+	g_gunfile[7] = "assets/weapons/auto-rifle_reload05.xpm";
+	g_gunfile[8] = "assets/weapons/auto-rifle_reload06.xpm";
+	g_gunfile[9] = "assets/weapons/auto-rifle_reload07.xpm";
+	g_gunfile[10] = "assets/weapons/auto-rifle_reload08.xpm";
+	g_gunfile[11] = "assets/weapons/auto-rifle_reload09.xpm";
+	g_gunfile[12] = "assets/weapons/auto-rifle_reload10.xpm";
+	g_gunfile[13] = "assets/weapons/auto-rifle_reload11.xpm";
+	g_gunfile[14] = "assets/weapons/auto-rifle_reload12.xpm";
+	g_gunfile[15] = "assets/weapons/auto-rifle_reload13.xpm";
+	g_gunfile[16] = "assets/weapons/auto-rifle_reload14.xpm";
+	g_gunfile[17] = "assets/weapons/auto-rifle_reload15.xpm";
+	g_gunfile[18] = "assets/weapons/auto-rifle_reload16.xpm";
+	g_gunfile[19] = "assets/weapons/auto-rifle_reload17.xpm";
+	g_gunfile[20] = "assets/weapons/auto-rifle_reload18.xpm";
+	g_gunfile[21] = "assets/weapons/auto-rifle_reload19.xpm";
+	g_gunfile[22] = "assets/weapons/auto-rifle_reload20.xpm";
+	g_gunfile[23] = "assets/weapons/auto-rifle_reload21.xpm";
+	g_gunfile[24] = "assets/weapons/auto-rifle_reload22.xpm";
+	g_gunfile[25] = "assets/weapons/auto-rifle_reload23.xpm";
+	g_gunfile[26] = "assets/weapons/auto-rifle_reload24.xpm";
+	g_gunfile[27] = "assets/weapons/auto-rifle_reload25.xpm";
+	g_gunfile[28] = "assets/weapons/auto-rifle_reload26.xpm";
+	g_gunfile[29] = "assets/weapons/auto-rifle_reload27.xpm";
+	g_gunfile[30] = "assets/weapons/auto-rifle_reload28.xpm";
+	g_gunfile[31] = "assets/weapons/auto-rifle_reload29.xpm";
+	g_gunfile[32] = "assets/weapons/auto-rifle_reload30.xpm";
 }
 
 void	load_assets(t_env *env)
@@ -181,20 +210,20 @@ void	load_assets(t_env *env)
 	i = 0;
 	while (i++ < NUM_TEX - 1)
 	{
-		env->tex.img[i] = mlx_xpm_file_to_image(env->mlx, env->texfile[i], &env->tex.width, &env->tex.height);
-		env->tex.str[i] = (int *)mlx_get_data_addr(env->tex.img[i], &env->tex.bpp, &env->tex.sl, &env->tex.endian);
+		env->tex.img[i] = mlx_xpm_file_to_image(env->mlx, g_texfile[i], &env->tex.width, &env->tex.height);
+		env->tex.arr[i] = (int *)mlx_get_data_addr(env->tex.img[i], &env->tex.bpp, &env->tex.sl, &env->tex.endian);
 	}
 	i = -1;
-	while (i++ < FRAMES - 1)
+	while (i++ < 31)
 	{
-		env->weapon.img[i] = mlx_xpm_file_to_image(env->mlx, env->gunfile[i], &env->weapon.width, &env->weapon.height);
-		env->weapon.str[i] = (int *)mlx_get_data_addr(env->weapon.img[i], &env->weapon.bpp, &env->weapon.sl, &env->weapon.endian);
+		env->weapon.img[i] = mlx_xpm_file_to_image(env->mlx, g_gunfile[i], &env->weapon.width, &env->weapon.height);
+		env->weapon.arr[i] = (int *)mlx_get_data_addr(env->weapon.img[i], &env->weapon.bpp, &env->weapon.sl, &env->weapon.endian);
 	}
 }
 
 void	init_tex(t_env *env)
 {
-	set_texfile(env);
+	set_texfile();
 	env->tex.bpp = 4;
 	env->tex.sl = 0;
 	env->tex.endian = 0;

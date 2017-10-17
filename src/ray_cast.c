@@ -66,24 +66,21 @@ void	draw_col(t_env *env, t_ray ray, int col, double angle)
 	int		y;
 	int		floor;
 	double	i;
-	double	smog;
-	double	straight;
-	int		real;
 	int		j;
 	int		sky;
+	double	straight;
+	int		real;
 	t_ixy	dist;
 
-	slice = WALL_HEIGHT / ray.dist;
-	if (slice > 5000)
+	if ((slice = WALL_HEIGHT / ray.dist) > 5000)
 	 	slice = 5000;
-	smog = (slice < WIN_W) ? ((double)slice / WIN_H) : 1.5;
 	y = HALF_H - (slice / 2);
 	floor = y + slice;
 	j = 0;
 	while (j < y)
 	{
 		sky = angle * (SKY_W / (2 * M_PI));
-		env->color.rgb = env->tex.str[6][sky + (j * SKY_W)];
+		env->color.rgb = env->tex.arr[6][sky + (j * SKY_W)];
 		env->pixels[col + (j * (WIN_W))] = env->color.rgb;
 		j++;
 	}
@@ -92,7 +89,7 @@ void	draw_col(t_env *env, t_ray ray, int col, double angle)
 	{
 		if (y >= 0 && y < WIN_H)
 		{
-			env->color.rgb = env->tex.str[ray.tex][ray.off + ((int)i * TEX_RES)];
+			env->color.rgb = env->tex.arr[ray.tex][ray.off + ((int)i * TEX_RES)];
 			env->pixels[col + (y * (WIN_W))] = env->color.rgb;
 		}
 		i += (64 / (double)slice);
@@ -107,7 +104,7 @@ void	draw_col(t_env *env, t_ray ray, int col, double angle)
 		//ft_printf("%d\t%d\t%d\n", col, dist.x, dist.y);
 		dist.x = (dist.x / 4096) % TEX_RES;
 		dist.y = (dist.y / 4096) % TEX_RES;
-		env->color.rgb = env->tex.str[1][dist.x + (dist.y * TEX_RES)];
+		env->color.rgb = env->tex.arr[1][dist.x + (dist.y * TEX_RES)];
 		env->pixels[col + (y * (WIN_W))] = env->color.rgb;
 		y++;
 	}
@@ -154,7 +151,7 @@ void	ray_cast(t_env *env)
 		col++;
 	}
 	mlx_put_image_to_window(env->mlx, env->win, env->img, 0, 0);
-	mlx_put_image_to_window(env->mlx, env->win, env->weapon.img[env->anim], HALF_W - (GUN_W / 2), WIN_H - GUN_H);
+	mlx_put_image_to_window(env->mlx, env->win, env->weapon.img[env->gun.anim], HALF_W - (GUN_W / 2) + 100, WIN_H - GUN_H);
 	if (env->won)
 		mlx_put_image_to_window(env->mlx, env->win, env->tex.img[5], HALF_W - 210, HALF_H - 150);
 	env->drawn = 1;
