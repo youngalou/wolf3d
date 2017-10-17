@@ -166,6 +166,7 @@ typedef struct	s_env
 	int			tex_V;
 	int			x0;
 	int			y0;
+	double		smog;
 	int			drawn;
 	int			won;
 	int			flash;
@@ -191,6 +192,7 @@ int		check_grid(t_env *env, int x, int y);
 void	horizontal_ray(t_env *env, double angle);
 void	vertical_ray(t_env *env, double angle);
 void	draw_col(t_env *env, t_ray ray, int col, double angle);
+void	add_smog(t_env *env);
 void	clear_img(int *pixels);
 void	ray_cast(t_env *env);
 
@@ -244,5 +246,6 @@ performance has improved significantly, but there are definitely more optimizati
 			(Need to figure out how to make empty pixels not render as black)
 2nd option: Optimize floor casting. Sheer number of mathematical operations makes runtime very slow.
 			Find anything you can precalculate outside the loop.
+3rd option: Reduce window resolution. Raycasting in general is not optimized for large windows.
 
 */

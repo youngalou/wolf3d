@@ -85,11 +85,13 @@ void	draw_col(t_env *env, t_ray ray, int col, double angle)
 		j++;
 	}
 	i = 0;
+	env->smog = (slice < WIN_H) ? ((double)slice / WIN_H) : 1;
 	while (y < floor)
 	{
 		if (y >= 0 && y < WIN_H)
 		{
 			env->color.rgb = env->tex.arr[ray.tex][ray.off + ((int)i * TEX_RES)];
+			add_smog(env);
 			env->pixels[col + (y * (WIN_W))] = env->color.rgb;
 		}
 		i += (64 / (double)slice);
@@ -105,9 +107,19 @@ void	draw_col(t_env *env, t_ray ray, int col, double angle)
 		dist.x = (dist.x / 4096) % TEX_RES;
 		dist.y = (dist.y / 4096) % TEX_RES;
 		env->color.rgb = env->tex.arr[1][dist.x + (dist.y * TEX_RES)];
+		env->smog = SCALE / (double)real;
+		add_smog(env);
 		env->pixels[col + (y * (WIN_W))] = env->color.rgb;
 		y++;
 	}
+}
+
+void	add_smog(t_env *env)
+{
+	env->color.r = env->color.rgb >> 16;
+	env->color.g = (env->color.rgb >> 8) & 0xFF;
+	env->color.b = env->color.rgb & 0xFF;
+	env->color.rgb = ((int)(env->color.r * env->smog) << 16) + ((int)(env->color.g * env->smog) << 8) + (env->color.b * env->smog);
 }
 
 void	clear_img(int *pixels)
