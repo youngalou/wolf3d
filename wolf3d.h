@@ -39,7 +39,7 @@
 
 # define GUN_W 450
 # define GUN_H 200
-# define FRAMES 32
+# define FRAMES 33
 # define SHOOT 3
 # define WAIT 3
 # define AMMO 20
@@ -73,12 +73,6 @@ typedef struct	s_dxy
 	double		y;
 }				t_dxy;
 
-typedef struct	s_player
-{
-	t_ixy		pos;
-	t_dxy		dir;
-}				t_player;
-
 typedef struct	s_map
 {
 	int			**grid;
@@ -87,6 +81,12 @@ typedef struct	s_map
 	t_ixy		exit;
 }				t_map;
 
+typedef struct	s_player
+{
+	t_ixy		pos;
+	t_dxy		dir;
+}				t_player;
+
 typedef struct	s_rgb
 {
 	int			r;
@@ -94,17 +94,6 @@ typedef struct	s_rgb
 	int			b;
 	int			rgb;
 }				t_rgb;
-
-typedef struct		s_img
-{
-	void			*img[FRAMES];
-	int				*arr[FRAMES];
-	int				bpp;
-	int				sl;
-	int				endian;
-	int				width;
-	int				height;
-}					t_img;
 
 typedef struct	s_key
 {
@@ -142,6 +131,25 @@ typedef struct	s_gun
 	int			reload;
 }				t_gun;
 
+typedef struct		s_img
+{
+	void			*img[FRAMES];
+	int				*arr[FRAMES];
+	int				bpp;
+	int				sl;
+	int				endian;
+	int				width;
+	int				height;
+}					t_img;
+
+typedef struct	s_sprite
+{
+	void		*img;
+	int			*arr;
+	t_ixy		pos;
+	int			dist;
+}				t_sprite;
+
 typedef struct	s_env
 {
 	void		*mlx;
@@ -153,6 +161,7 @@ typedef struct	s_env
 	int			endian;
 	t_map		map;
 	t_player	player;
+	t_sprite	sprite;
 	t_rgb		color;
 	t_img		tex;
 	t_img		weapon;
@@ -171,6 +180,7 @@ typedef struct	s_env
 	int			won;
 	int			flash;
 	t_gun		gun;
+	int			dist[WIN_W];
 }				t_env;
 
 /*

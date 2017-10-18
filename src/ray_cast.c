@@ -134,6 +134,18 @@ void	clear_img(int *pixels)
 	}
 }
 
+void	draw_sprite(t_env *env)
+{
+	int		tmpx;
+	int		tmpy;
+
+	tmpx = env->sprite.pos.x - env->player.pos.x;
+	tmpx *= tmpx;
+	tmpy = env->sprite.pos.y - env->player.pos.y;
+	tmpy *= tmpy;
+	env->sprite.dist = sqrt(tmpx + tmpy);
+}
+
 void	ray_cast(t_env *env)
 {
 	double	angle;
@@ -159,9 +171,11 @@ void	ray_cast(t_env *env)
 			draw_col(env, env->H, col, angle);
 		else
 			draw_col(env, env->V, col, angle);
+		env->dist[col] = ((env->H.dist <= env->V.dist) ? env->H.dist : env->V.dist);
 		angle -= ANGLE_SHIFT; //put angle shift and FOV into struct to make FOV changeable
 		col++;
 	}
+	draw_sprite(env);
 	mlx_put_image_to_window(env->mlx, env->win, env->img, 0, 0);
 	mlx_put_image_to_window(env->mlx, env->win, env->weapon.img[env->gun.anim], HALF_W - (GUN_W / 2) + 100, WIN_H - GUN_H);
 	if (env->won && env->flash < 20)

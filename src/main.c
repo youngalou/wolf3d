@@ -128,6 +128,8 @@ t_env	*init_env(void)
 	env->gun.shoot = 0;
 	env->gun.ammo = AMMO;
 	env->gun.reload = 0;
+	env->sprite.pos.x = 2.5 * SCALE;
+	env->sprite.pos.y = 4.5 * SCALE;
 	return (env);
 }
 
@@ -221,6 +223,8 @@ void	load_assets(t_env *env)
 		env->weapon.img[i] = mlx_xpm_file_to_image(env->mlx, g_gunfile[i], &env->weapon.width, &env->weapon.height);
 		env->weapon.arr[i] = (int *)mlx_get_data_addr(env->weapon.img[i], &env->weapon.bpp, &env->weapon.sl, &env->weapon.endian);
 	}
+	env->sprite.img = mlx_xpm_file_to_image(env->mlx, "assets/sprites/barrel.xpm", &env->tex.width, &env->tex.height);
+	env->sprite.arr = (int *)mlx_get_data_addr(env->sprite.img, &env->tex.bpp, &env->tex.sl, &env->tex.endian);
 }
 
 void	init_tex(t_env *env)
