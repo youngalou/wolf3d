@@ -175,9 +175,9 @@ void	ray_cast(t_env *env)
 		angle -= ANGLE_SHIFT; //put angle shift and FOV into struct to make FOV changeable
 		col++;
 	}
-	draw_sprite(env);
+	//draw_sprite(env);
 	mlx_put_image_to_window(env->mlx, env->win, env->img, 0, 0);
-	mlx_put_image_to_window(env->mlx, env->win, env->weapon.img[env->gun.anim], HALF_W - (GUN_W / 2) + 100, WIN_H - GUN_H);
+	mlx_put_image_to_window(env->mlx, env->win, env->weapon.img[env->gun.anim], HALF_W - (GUN_W / 2) + 100, env->gun.height);
 	if (env->won && env->flash < 20)
 		mlx_put_image_to_window(env->mlx, env->win, env->tex.img[7], HALF_W - 210, HALF_H - 150);
 	else if (env->gun.ammo == 0 && env->flash < 20 && !env->gun.reload)

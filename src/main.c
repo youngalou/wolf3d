@@ -71,6 +71,11 @@ void	load_map(t_env *env, int fd)
 			x++;
 		}
 		y++;
+		// if (line != NULL)
+		// {
+		// 	ft_putstr(line);
+		// 	ft_strdel(&line);
+		// }
 	}
 }
 
@@ -128,6 +133,8 @@ t_env	*init_env(void)
 	env->gun.shoot = 0;
 	env->gun.ammo = AMMO;
 	env->gun.reload = 0;
+	env->gun.height = 315;
+	env->gun.move = 1;
 	env->sprite.pos.x = 2.5 * SCALE;
 	env->sprite.pos.y = 4.5 * SCALE;
 	return (env);
@@ -218,7 +225,7 @@ void	load_assets(t_env *env)
 		env->tex.arr[i] = (int *)mlx_get_data_addr(env->tex.img[i], &env->tex.bpp, &env->tex.sl, &env->tex.endian);
 	}
 	i = -1;
-	while (i++ < 31)
+	while (i++ < FRAMES - 1)
 	{
 		env->weapon.img[i] = mlx_xpm_file_to_image(env->mlx, g_gunfile[i], &env->weapon.width, &env->weapon.height);
 		env->weapon.arr[i] = (int *)mlx_get_data_addr(env->weapon.img[i], &env->weapon.bpp, &env->weapon.sl, &env->weapon.endian);
@@ -250,7 +257,7 @@ void	open_mlx(t_env *env)
 	env->img = mlx_new_image(env->mlx, WIN_W, WIN_H);
 	env->pixels = (int*)mlx_get_data_addr(env->img, &env->bpp, &env->sl, &env->endian);
 	init_tex(env);
-	ray_cast(env);
+	//ray_cast(env);
 	mlx_hook(env->win, 2, 0, key_press, env);
 	mlx_hook(env->win, 3, 0, key_release, env);
 	mlx_hook(env->win, 6, 0, mouse_pos, env);

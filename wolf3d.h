@@ -129,6 +129,8 @@ typedef struct	s_gun
 	int			shoot;
 	int			ammo;
 	int			reload;
+	int			height;
+	int			move;
 }				t_gun;
 
 typedef struct		s_img

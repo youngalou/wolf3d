@@ -12,10 +12,36 @@
 
 #include "../wolf3d.h"
 
+void	free_all(t_env *env)
+{
+	int		i;
+
+	i = -1;
+	while (i++ < NUM_TEX - 1)
+	{
+		free(env->tex.img[i]);
+		free(env->tex.arr[i]);
+	}
+	i = -1;
+	while (i++ < FRAMES - 1)
+	{
+		free(env->weapon.img[i]);
+		free(env->weapon.arr[i]);
+	}
+	i = -1;
+	while (i++ < env->map.length - 1)
+		free(env->map.grid[i]);
+	free(env->map.grid);
+	free(env->win);
+	free(env->img);
+	free(env->pixels);
+	free(env);
+}
+
 int		exit_hook(int key, t_env *env)
 {
 	(void)key;
-	(void)env;
+	free_all(env);
 	exit(0);
 	return (0);
 }
@@ -45,7 +71,7 @@ int		mouse_pos(int x, int y, t_env *env)
 int		key_press(int key, t_env *env)
 {
 	if (key == KEY_ESC)
-		exit(0);
+		exit_hook(0, env);
 	if (key == KEY_TAB)
 		reset(env);
 	if (key == KEY_LARR || key == KEY_RARR || key == KEY_W || (key >= KEY_A && key <= KEY_D) || key == KEY_SPACE || key == KEY_R)
@@ -151,7 +177,7 @@ int		forever_loop(t_env *env)
 	int		move_x;
 	int		move_y;
 
-	if (env->key.larr || env->key.rarr || env->key.w || env->key.a || env->key.s || env->key.d || env->key.space || env->gun.shoot || env->gun.reload)
+	if (env->key.larr || env->key.rarr)
 	{
 		if (env->key.larr || env->key.rarr)
 		{
@@ -164,6 +190,9 @@ int		forever_loop(t_env *env)
 			while (env->player.dir.x < 0)
 				env->player.dir.x += 2 * M_PI;
 		}
+	}
+	if (env->key.w || env->key.a || env->key.s || env->key.d)
+	{
 		move_x = cos(env->player.dir.x) * MOVE_SPEED;
 		move_y = sin(env->player.dir.x) * MOVE_SPEED;
 		if (env->key.w)
@@ -180,8 +209,8 @@ int		forever_loop(t_env *env)
 			if (!check_grid(env, env->player.pos.x - (COLLISION * move_x), env->player.pos.y))
 				env->player.pos.x -= move_x;
 		}
-		move_x = cos(env->player.dir.x - (M_PI / 2)) * MOVE_SPEED;
-		move_y = sin(env->player.dir.x - (M_PI / 2)) * MOVE_SPEED;
+		move_x = cos(env->player.dir.x - (M_PI / 2)) * (MOVE_SPEED / 2);
+		move_y = sin(env->player.dir.x - (M_PI / 2)) * (MOVE_SPEED / 2);
 		if (env->key.a)
 		{
 			if (!check_grid(env, env->player.pos.x, env->player.pos.y + (COLLISION * move_y)))
@@ -201,8 +230,17 @@ int		forever_loop(t_env *env)
 			env->won = 1;
 			env->flash = 0;
 		}
-		animations(env);
+		if (!env->gun.reload)
+		{
+			env->gun.height += (env->gun.move) ? -1 : 1;
+			if (env->gun.height >= 325)
+				env->gun.move = 1;
+			else if (env->gun.height <= 300)
+				env->gun.move = 0;
+		}
 	}
+	if (env->key.space || env->gun.shoot || env->gun.reload)
+		animations(env);
 	ray_cast(env);
 	return (0);
 }
