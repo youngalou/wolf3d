@@ -71,35 +71,7 @@ void	load_map(t_env *env, int fd)
 			x++;
 		}
 		y++;
-		// if (line != NULL)
-		// {
-		// 	ft_putstr(line);
-		// 	ft_strdel(&line);
-		// }
 	}
-}
-
-void	reset(t_env *env)
-{
-	env->player.dir.x = ANGLE_START;
-	env->player.dir.y = 0;
-	env->key.w = 0;
-	env->key.a = 0;
-	env->key.s = 0;
-	env->key.d = 0;
-	env->key.uarr = 0;
-	env->key.darr = 0;
-	env->key.larr = 0;
-	env->key.rarr = 0;
-	env->key.space = 0;
-	env->mouse.init = 0;
-	env->won = 0;
-	env->gun.anim = 0;
-	env->gun.wait = 0;
-	env->gun.shoot = 0;
-	env->gun.ammo = AMMO;
-	env->gun.reload = 0;
-	ray_cast(env);
 }
 
 t_env	*init_env(void)
@@ -135,8 +107,9 @@ t_env	*init_env(void)
 	env->gun.reload = 0;
 	env->gun.height = 315;
 	env->gun.move = 1;
-	env->sprite.pos.x = 2.5 * SCALE;
-	env->sprite.pos.y = 4.5 * SCALE;
+	env->sprite_anim = 1;
+	env->sprite[env->sprite_anim].pos.x = 23 * SCALE;
+	env->sprite[env->sprite_anim].pos.y = 23 * SCALE;
 	return (env);
 }
 
@@ -167,7 +140,8 @@ void	print_grid(t_env *env)
 }
 
 char	*g_texfile[NUM_TEX];
-char	*g_gunfile[33];
+char	*g_gunfile[FRAMES];
+char	*g_spritefile[SPRITES];
 
 void	set_texfile(void)
 {
@@ -212,6 +186,17 @@ void	set_texfile(void)
 	g_gunfile[30] = "assets/weapons/auto-rifle_reload28.xpm";
 	g_gunfile[31] = "assets/weapons/auto-rifle_reload29.xpm";
 	g_gunfile[32] = "assets/weapons/auto-rifle_reload30.xpm";
+	g_spritefile[0] = "assets/sprites/barrel.xpm";
+	g_spritefile[1] = "assets/sprites/imp1.xpm";
+	g_spritefile[2] = "assets/sprites/imp2.xpm";
+	g_spritefile[3] = "assets/sprites/imp3.xpm";
+	g_spritefile[4] = "assets/sprites/imp4.xpm";
+	g_spritefile[5] = "assets/sprites/imp5.xpm";
+	g_spritefile[6] = "assets/sprites/imp6.xpm";
+	g_spritefile[7] = "assets/sprites/imp7.xpm";
+	g_spritefile[8] = "assets/sprites/imp8.xpm";
+	g_spritefile[9] = "assets/sprites/imp9.xpm";
+	g_spritefile[10] = "assets/sprites/imp10.xpm";
 }
 
 void	load_assets(t_env *env)
@@ -230,8 +215,12 @@ void	load_assets(t_env *env)
 		env->weapon.img[i] = mlx_xpm_file_to_image(env->mlx, g_gunfile[i], &env->weapon.width, &env->weapon.height);
 		env->weapon.arr[i] = (int *)mlx_get_data_addr(env->weapon.img[i], &env->weapon.bpp, &env->weapon.sl, &env->weapon.endian);
 	}
-	env->sprite.img = mlx_xpm_file_to_image(env->mlx, "assets/sprites/barrel.xpm", &env->tex.width, &env->tex.height);
-	env->sprite.arr = (int *)mlx_get_data_addr(env->sprite.img, &env->tex.bpp, &env->tex.sl, &env->tex.endian);
+	i = -1;
+	while (i++ < SPRITES - 1)
+	{
+		env->sprite[i].img = mlx_xpm_file_to_image(env->mlx, g_spritefile[i], &env->tex.width, &env->tex.height);
+		env->sprite[i].arr = (int *)mlx_get_data_addr(env->sprite[i].img, &env->tex.bpp, &env->tex.sl, &env->tex.endian);
+	}
 }
 
 void	init_tex(t_env *env)

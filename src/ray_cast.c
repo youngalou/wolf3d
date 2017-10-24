@@ -94,7 +94,7 @@ void	draw_col(t_env *env, t_ray ray, int col, double angle)
 			add_smog(env);
 			env->pixels[col + (y * (WIN_W))] = env->color.rgb;
 		}
-		i += (64 / (double)slice);
+		i += (TEX_RES / (double)slice);
 		y++;
 	}
 	while (y < WIN_H)
@@ -103,7 +103,6 @@ void	draw_col(t_env *env, t_ray ray, int col, double angle)
 		real = straight / cos(angle - env->player.dir.x);
 		dist.x = env->player.pos.x + (real * cos(angle));
 		dist.y = env->player.pos.y - (real * sin(angle));
-		//ft_printf("%d\t%d\t%d\n", col, dist.x, dist.y);
 		dist.x = (dist.x / 4096) % TEX_RES;
 		dist.y = (dist.y / 4096) % TEX_RES;
 		env->color.rgb = env->tex.arr[1][dist.x + (dist.y * TEX_RES)];
@@ -122,28 +121,76 @@ void	add_smog(t_env *env)
 	env->color.rgb = ((int)(env->color.r * env->smog) << 16) + ((int)(env->color.g * env->smog) << 8) + (env->color.b * env->smog);
 }
 
-void	clear_img(int *pixels)
+void	clear_img(t_env *env)
 {
 	int		i;
 
 	i = 0;
 	while (i < (WIN_W * WIN_H))
 	{
-		pixels[i] = 0;
+		env->pixels[i] = 0;
 		i++;
 	}
+	// trying to clean garbage values in dist buffer
+	// i = 0;
+	// while (i < WIN_W)
+	// {
+	// 	env->dist[i] = 0;
+	// 	i++;
+	// }
 }
 
-void	draw_sprite(t_env *env)
+void	draw_sprite(t_env *env)  // sprite not showing at 0 degrees
 {
-	int		tmpx;
-	int		tmpy;
+	intmax_t		delta_x;
+	intmax_t		delta_y;
+	double			rel_angle;
+	int				col;
+	int				x;
+	int				y;
+	int				max_x;
+	int				max_y;
+	double			i;
+	double			j;
 
-	tmpx = env->sprite.pos.x - env->player.pos.x;
-	tmpx *= tmpx;
-	tmpy = env->sprite.pos.y - env->player.pos.y;
-	tmpy *= tmpy;
-	env->sprite.dist = sqrt(tmpx + tmpy);
+	delta_x = env->sprite[env->sprite_anim].pos.x - env->player.pos.x;
+	delta_y = env->player.pos.y - env->sprite[env->sprite_anim].pos.y;
+	if ((env->sprite[env->sprite_anim].angle = atan2(delta_y, delta_x)) < 0)
+		env->sprite[env->sprite_anim].angle += 2 * M_PI;
+	delta_x = delta_x * delta_x;
+	delta_y = delta_y * delta_y;
+	env->sprite[env->sprite_anim].dist = sqrt(delta_x + delta_y);
+	rel_angle = env->player.dir.x - env->sprite[env->sprite_anim].angle;
+	col = (rel_angle / ANGLE_SHIFT) + HALF_W;
+	if ((env->sprite[env->sprite_anim].size = SPRITE_MAX / ((double)env->sprite[env->sprite_anim].dist / SCALE)) > SPRITE_MAX)
+		env->sprite[env->sprite_anim].size = SPRITE_MAX;
+	x = col - (env->sprite[env->sprite_anim].size / 2);
+	max_x = x + env->sprite[env->sprite_anim].size;
+	i = 0;
+	while (x < max_x && x < WIN_W)
+	{
+		if (env->sprite[env->sprite_anim].dist <= env->dist[x])
+		{
+			//printf("%d\t%d\n", env->dist[x], env->sprite[env->sprite_anim].dist);
+			y = HALF_H - (env->sprite[env->sprite_anim].size / 2);
+			max_y = y + env->sprite[env->sprite_anim].size;
+			j = 0;
+			while (y < max_y && y < WIN_H)
+			{
+				env->color.rgb = env->sprite[env->sprite_anim].arr[(int)i + ((int)j * TEX_RES)];
+				if (env->color.rgb > 0)
+				{
+					env->smog = (env->sprite[env->sprite_anim].size < WIN_H) ? ((double)env->sprite[env->sprite_anim].size / WIN_H) : 1;
+					add_smog(env);
+					env->pixels[x + (y * WIN_W)] = env->color.rgb;
+				}
+				y++;
+				j += (TEX_RES / (double)env->sprite[env->sprite_anim].size);
+			}
+		}
+		x++;
+		i += (TEX_RES / (double)env->sprite[env->sprite_anim].size);
+	}
 }
 
 void	ray_cast(t_env *env)
@@ -151,12 +198,12 @@ void	ray_cast(t_env *env)
 	double	angle;
 	int		col;
 
-	// if (env->drawn == 1)
-	// {
-	// 	clear_img(env->pixels);
-	// 	mlx_clear_window(env->mlx, env->win);
-	// 	env->drawn = 0;
-	// }
+	if (env->drawn == 1)
+	{
+		clear_img(env);
+		mlx_clear_window(env->mlx, env->win);
+		env->drawn = 0;
+	}
 	angle = env->player.dir.x + (FOV / 2);
 	while (angle > 2 * M_PI)
 		angle -= (2 * M_PI);
@@ -171,11 +218,12 @@ void	ray_cast(t_env *env)
 			draw_col(env, env->H, col, angle);
 		else
 			draw_col(env, env->V, col, angle);
-		env->dist[col] = ((env->H.dist <= env->V.dist) ? env->H.dist : env->V.dist);
+		env->dist[col] = ((env->H.dist <= env->V.dist) ? env->H.dist : env->V.dist); // filled with garbage values
+		// USE DIST BUFFER TO DRAW_COL ALL AT ONCE WITH A LOOP (store values first, render later)
 		angle -= ANGLE_SHIFT; //put angle shift and FOV into struct to make FOV changeable
 		col++;
 	}
-	//draw_sprite(env);
+	draw_sprite(env);
 	mlx_put_image_to_window(env->mlx, env->win, env->img, 0, 0);
 	mlx_put_image_to_window(env->mlx, env->win, env->weapon.img[env->gun.anim], HALF_W - (GUN_W / 2) + 100, env->gun.height);
 	if (env->won && env->flash < 20)

@@ -44,6 +44,9 @@
 # define WAIT 3
 # define AMMO 20
 
+# define SPRITES 11
+# define SPRITE_MAX 1000
+
 # define MOVE_SPEED (5 * (RENDER_SCALE))
 # define TURN_SPEED (M_PI / 128)
 # define MOUSE_SENS (4 * M_PI / WIN_W)
@@ -149,7 +152,9 @@ typedef struct	s_sprite
 	void		*img;
 	int			*arr;
 	t_ixy		pos;
+	double		angle;
 	int			dist;
+	int			size;
 }				t_sprite;
 
 typedef struct	s_env
@@ -163,10 +168,10 @@ typedef struct	s_env
 	int			endian;
 	t_map		map;
 	t_player	player;
-	t_sprite	sprite;
 	t_rgb		color;
 	t_img		tex;
 	t_img		weapon;
+	t_sprite	sprite[SPRITES];
 	t_key		key;
 	t_mouse		mouse;
 	t_ray		H;
@@ -183,6 +188,7 @@ typedef struct	s_env
 	int			flash;
 	t_gun		gun;
 	int			dist[WIN_W];
+	int			sprite_anim;
 }				t_env;
 
 /*
@@ -205,7 +211,7 @@ void	horizontal_ray(t_env *env, double angle);
 void	vertical_ray(t_env *env, double angle);
 void	draw_col(t_env *env, t_ray ray, int col, double angle);
 void	add_smog(t_env *env);
-void	clear_img(int *pixels);
+void	clear_img(t_env *env);
 void	ray_cast(t_env *env);
 
 /*

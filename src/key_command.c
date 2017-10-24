@@ -72,8 +72,6 @@ int		key_press(int key, t_env *env)
 {
 	if (key == KEY_ESC)
 		exit_hook(0, env);
-	if (key == KEY_TAB)
-		reset(env);
 	if (key == KEY_LARR || key == KEY_RARR || key == KEY_W || (key >= KEY_A && key <= KEY_D) || key == KEY_SPACE || key == KEY_R)
 	{
 		if (key == KEY_LARR || key == KEY_RARR)
